@@ -38,9 +38,7 @@ Follow these steps to get your development environment running. In this mode, th
     This navigates to the `frontend` directory and installs its dependencies (like React, Vite, etc.).
 
     ```bash
-    cd frontend
     npm --prefix frontend install
-    cd ..
     ```
 
 4.  **Run the application:**
