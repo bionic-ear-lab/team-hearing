@@ -1,10 +1,28 @@
+### Java / Spring Boot ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+### Logs ###
+*.log
+*.out
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Frontend (React / Vite) ###
+/frontend/node_modules
+/frontend/dist
+/frontend/.vite
+
+### Root node_modules (for concurrently, etc.) ###
+/node_modules
+
+### IDEs ###
+# STS
 .apt_generated
 .classpath
 .factorypath
@@ -13,13 +31,13 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
+# IntelliJ
 .idea
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +47,5 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# VS Code
 .vscode/
