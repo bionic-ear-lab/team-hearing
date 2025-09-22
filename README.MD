@@ -27,22 +27,24 @@ Follow these steps to get your development environment running. In this mode, th
     cd team-hearing
     ```
 
-2.  **Install root dependencies:**
+2.  **Install dependencies:**
     This installs `concurrently`, which is used to run both servers with one command.
 
     ```bash
     npm install
     ```
 
-3.  **Install frontend dependencies:**
-    This navigates to the `frontend` directory and installs its dependencies (like React, Vite, etc.).
+3.  **Set up MySQL database**
+    Go to the [README](https://github.com/bionic-ear-lab/team-hearing/blob/487a045e18d391363bd56606b80470b141b31d29/database/README.md)
 
-    ```bash
-    npm --prefix frontend install
-    ```
+4.  **Download piano files locally**
+    Go to the [Musescore Dropbox folder](https://www.dropbox.com/scl/fo/1s7gxjlud0iohaco5ct7z/AOKAzUPmQX1NmmzKPM3jU7M?rlkey=zm05o9qs7nm9cghlrg4ri8sv2&e=1&st=s0vhdn1d&dl=0) containing sound files.
+    Open library/piano directory.
+    Download original directory.
+    Add to local development with filepath musescore/libary/piano/original.
 
-4.  **Run the application:**
-    This is the main command to start both the backend and frontend servers.
+5.  **Run the application:**
+    This is the main command to start both the backend and frontend servers. Run this for local testing.
 
     ```bash
     npm run dev
@@ -55,7 +57,7 @@ Follow these steps to get your development environment running. In this mode, th
 
 -----
 
-## Production Build and Deployment 
+## TO BE FIXED Production Build and Deployment 
 
 For production, the Vite frontend is built into static files, which are then served by the Spring Boot application. This results in a single, self-contained `.jar` file that can be easily deployed.
 

@@ -4,6 +4,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+backend/src/main/resources/application-local.properties
 
 ### Logs ###
 *.log
@@ -49,3 +50,7 @@ build/
 
 # VS Code
 .vscode/
+
+# Music files
+/musescore
+processor.js
