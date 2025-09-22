@@ -97,3 +97,13 @@ java -jar backend/target/your-app-name-0.0.1-SNAPSHOT.jar
 ```
 
 The entire application (both frontend and backend) is now running on a single port and can be accessed at `http://localhost:8080`.
+You can run a bash script that runs all of step 3!!!
+Make it executable: 
+```bash
+chmod -x build-and-run.sh
+```
+Run it:
+```bash
+./build-and-run.sh
+```
+
