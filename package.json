@@ -2,13 +2,12 @@
   "name": "team-hearing",
   "private": true,
   "devDependencies": {
-    "@types/react": "^19.1.13",
-    "@types/react-dom": "^19.1.9",
     "concurrently": "^9.2.1"
   },
   "scripts": {
     "dev": "concurrently -k \"npm:dev:back\" \"npm:dev:front\"",
     "dev:back": "./mvnw -f backend/pom.xml spring-boot:run",
-    "dev:front": "npm --prefix frontend run dev"
+    "dev:front": "npm --prefix frontend run dev",
+    "postinstall": "npm install --prefix frontend"
   }
 }
