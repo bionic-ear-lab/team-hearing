@@ -52,5 +52,5 @@ build/
 .vscode/
 
 # Music files
-/musescore
+/frontend/public/musescore
 processor.js
