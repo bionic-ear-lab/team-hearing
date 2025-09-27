@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Homepage from './homepage';
+import Homepage from './Homepage';
 import Navbar from './Navbar';
-import SignupPage from "./pages/SignupPage";
-import LoginPage from "./pages/LoginPage";
-import ProfilePage from "./pages/ProfilePage";
-import PlayNotePage from "./pages/PlayNotePage";
+import SignupPage from "./SignupPage";
+import LoginPage from "./LoginPage";
+import ProfilePage from "./ProfilePage";
+import PlayNotePage from "./PlayNotePage";
 import './App.css';
 
 function App() {
