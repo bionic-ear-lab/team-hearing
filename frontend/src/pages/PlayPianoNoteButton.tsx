@@ -1,5 +1,5 @@
 import React from 'react';
-import { playPianoNote } from './audio';
+import { playPianoNote } from '../api/audio';
 
 interface PianoKeyProps {
   noteNumber: number;
