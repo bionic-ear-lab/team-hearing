@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../ProfilePage.css"; // adjust path if needed
+import "../style/ProfilePage.css";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({
