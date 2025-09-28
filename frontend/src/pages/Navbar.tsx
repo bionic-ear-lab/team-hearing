@@ -1,5 +1,5 @@
 import React from 'react';
-import './Navbar.css';
+import '../style/Navbar.css';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
         <span className="navbar-title">TeamHearing</span>
         <div className="navbar-right">
           <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
-          <span className="nav-link" onClick={() => {/* Add logout logic here */}}>Log Out</span>
+          <span className="nav-link" onClick={() => {/* Add logout logic here */ }}>Log Out</span>
         </div>
       </div>
     </nav>

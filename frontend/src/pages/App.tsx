@@ -6,7 +6,7 @@ import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
 import ProfilePage from "./ProfilePage";
 import PlayNotePage from "./PlayNotePage";
-import './App.css';
+import '../style/App.css';
 
 function App() {
   return (
