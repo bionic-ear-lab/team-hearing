@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-content">
         <div className="navbar-left">
-          <span className="nav-link" onClick={() => navigate('/')}>Home</span>
+          <span className="nav-link" onClick={() => navigate('/homepage')}>Home</span>
         </div>
         <span className="navbar-title">TeamHearing</span>
         <div className="navbar-right">
