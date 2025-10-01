@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { login } from "../api/auth";
+import "../style/LoginPage.css";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -15,20 +16,24 @@ export default function LoginPage() {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
+      <div className="login-box">
+        <input
+          className="login-input"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+        <input
+          className="login-input"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <button className="login-button" onClick={handleLogin}>Login</button>
+      </div>
     </div>
   );
 }

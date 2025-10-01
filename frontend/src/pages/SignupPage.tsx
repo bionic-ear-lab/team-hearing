@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { signup } from "../api/auth";
+import "../style/SignupPage.css";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -16,25 +17,30 @@ export default function SignupPage() {
   };
 
   return (
-    <div>
-      <h2>Signup</h2>
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <button onClick={handleSignup}>Sign Up</button>
+    <div className="signup-container">
+      <h2>Sign Up</h2>
+      <div className="signup-box">
+        <input
+          className="signup-input"
+          placeholder="Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+        <input
+          className="signup-input"
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <input
+          className="signup-input"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <button className="signup-button" onClick={handleSignup}>Sign Up</button>
+      </div>
     </div>
   );
 }
