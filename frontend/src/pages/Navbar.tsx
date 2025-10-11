@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
         <div className="navbar-left">
           <span className="nav-link" onClick={() => navigate('/homepage')}>Home</span>
         </div>
-        <span className="navbar-title">TeamHearing</span>
+        <span className="navbar-title" onClick={() => navigate('/homepage')}>TeamHearing</span>
         <div className="navbar-right">
           <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
           <span className="nav-link" onClick={() => {/* Add logout logic here */ }}>Log Out</span>
