@@ -5,6 +5,15 @@ const ExerciseHomepage: React.FC = () => {
   const { exerciseName } = useParams<{ exerciseName: string }>();
   const navigate = useNavigate();
 
+  const handleTestClick = () => {
+    if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
+      navigate("/test-template-test");
+    } else {
+      // Add more conditions for other exercises as needed
+      alert("No test page configured for this exercise.");
+    }
+  };
+
   return (
     <div className="music-exercises-container">
       <div className="music-exercises-title-row">
@@ -22,7 +31,7 @@ const ExerciseHomepage: React.FC = () => {
         </h2>
       </div>
       <div className="options-buttons">
-        <button className="test-button">Test</button>
+        <button className="test-button" onClick={handleTestClick}>Test</button>
         <button className="results-button">Results</button>
       </div>
     </div>
