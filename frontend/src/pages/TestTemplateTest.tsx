@@ -10,8 +10,13 @@ const TestTemplateTest: React.FC = () => {
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(5);
   const [showPopup, setShowPopup] = useState(true);
 
-  const [button1State, setButton1State] = useState<"normal" | "correct" | "incorrect">("normal");
-  const [button2State, setButton2State] = useState<"normal" | "correct" | "incorrect">("normal");
+  // Configurable button options array
+  const buttonOptions = ["1", "2"];
+  const numberOfButtons = buttonOptions.length; 
+
+  const [buttonStates, setButtonStates] = useState<("normal" | "correct" | "incorrect")[]>(
+    Array(numberOfButtons).fill("normal")
+  );
 
   const testName = location.state?.testName || "Test Template";
   const question = location.state?.question || "Which option is correct?";
@@ -20,24 +25,33 @@ const TestTemplateTest: React.FC = () => {
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
   );
 
-  const correct = (button: "button1" | "button2") => {
-    if (button === "button1") {
-      setButton1State("correct");
-      setTimeout(() => setButton1State("normal"), 1000);
-    } else if (button === "button2") {
-      setButton2State("correct");
-      setTimeout(() => setButton2State("normal"), 1000);
-    }
+  const correct = (buttonIndex: number) => {
+    const newStates = [...buttonStates];
+    newStates[buttonIndex] = "correct";
+    setButtonStates(newStates);
+    
+    setTimeout(() => {
+      setButtonStates(prevStates => {
+        const resetStates = [...prevStates];
+        resetStates[buttonIndex] = "normal";
+        return resetStates;
+      });
+    }, 1000);
   };
 
-  const incorrect = (button: "button1" | "button2") => {
-    if (button === "button1") {
-      setButton1State("incorrect");
-      setTimeout(() => setButton1State("normal"), 1000);
-    } else if (button === "button2") {
-      setButton2State("incorrect");
-      setTimeout(() => setButton2State("normal"), 1000);
-    }
+  const incorrect = (buttonIndex: number) => {
+    const newStates = [...buttonStates];
+    newStates[buttonIndex] = "incorrect";
+    setButtonStates(newStates);
+    
+    setTimeout(() => {
+      setButtonStates(prevStates => {
+        const resetStates = [...prevStates];
+        resetStates[buttonIndex] = "normal";
+        return resetStates;
+      });
+    }, 1000);
+    
     setNumberOfAttemptsLeft((prev) => Math.max(prev - 1, 0));
   };
 
@@ -65,19 +79,16 @@ const TestTemplateTest: React.FC = () => {
         <h2 className="music-exercises-title" style={{ margin: 0 }}>{question}</h2>
         <button className="repeat-button">Repeat</button>
       </div>
-      <div className="options-buttons">
-        <button
-          className={`button1 ${button1State}`}
-          onClick={() => correct("button1")}
-        >
-          1
-        </button>
-        <button
-          className={`button2 ${button2State}`}
-          onClick={() => incorrect("button2")}
-        >
-          2
-        </button>
+      <div className={`options-buttons buttons-${numberOfButtons}`}>
+        {buttonOptions.map((buttonText, i) => (
+          <button
+            key={i}
+            className={`option-button ${buttonStates[i]}`}
+            onClick={() => i === 0 ? correct(i) : incorrect(i)} 
+          >
+            {buttonText}
+          </button>
+        ))}
       </div>
       <div className="hearts-row">
         {hearts.map((heart, idx) => (
