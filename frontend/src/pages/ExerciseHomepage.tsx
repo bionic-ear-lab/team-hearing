@@ -8,6 +8,8 @@ const ExerciseHomepage: React.FC = () => {
   const handleTestClick = () => {
     if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
       navigate("/test-template-test");
+    } else if (exerciseName && decodeURIComponent(exerciseName) === "Pitch Resolution") {
+      navigate("/pitch-resolution-test");
     } else {
       // Add more conditions for other exercises as needed
       alert("No test page configured for this exercise.");
