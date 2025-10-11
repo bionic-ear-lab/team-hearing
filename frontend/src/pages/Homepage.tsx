@@ -1,10 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../style/Homepage.css';
 
 const Homepage: React.FC = () => {
+  const navigate = useNavigate();
+
   const handleButtonClick = (buttonName: string) => {
-    console.log(`${buttonName} button clicked`);
-    // Add navigation logic here later
+    if (buttonName === 'Music Exercises') {
+      navigate('/music-exercises');
+    } else {
+      console.log(`${buttonName} button clicked`);
+    }
   };
 
   return (
