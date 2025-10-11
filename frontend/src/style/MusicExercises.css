@@ -20,7 +20,7 @@ body {
 .music-exercises-title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Space out left, center, right */
+  justify-content: space-between; 
   width: 100%;
   gap: 16px;
   margin-bottom: 32px;
@@ -29,11 +29,11 @@ body {
 .music-exercises-title {
   margin: 0 !important;
   padding: 8px 0 !important;
-  text-align: left; /* Align title text to the left */
+  text-align: left;
   font-size: 2.5rem;
   font-weight: 600;
   color: #222;
-  flex: 1; /* Take up available space between buttons */
+  flex: 1; 
 }
 
 .music-exercises-buttons {
@@ -83,35 +83,38 @@ body {
   background: #f0f4fa;
 }
 
-/* Add to MusicExercises.css */
 .options-buttons {
   display: flex;
-  flex-direction: row;
   gap: 32px;
   width: 100%;
-  flex: 1;
+  height: 100%;        
+  flex: 1;              
   justify-content: center;
-  align-items: flex-start;   
+  align-items: stretch; 
   box-sizing: border-box;
   min-height: 0;
-  margin-top: 0;  
+  margin-top: 0;
 }
 
-.test-button,
-.results-button,
-.button1,
-.button2 {
-  flex: 1 1 0;
-  min-width: 120px;
-  min-height: 120px;
-  height: 60vw;           /* Responsive: scales with viewport width */
-  max-height: 60vh;       /* But never exceeds 60% of viewport height */
-  aspect-ratio: 1 / 1;    /* Always square */
+
+.options-buttons.buttons-2,
+.options-buttons.buttons-3,
+.options-buttons.buttons-4,
+.options-buttons.buttons-5,
+.options-buttons.buttons-6 {
+  flex-direction: row;   
+  flex-wrap: nowrap;      
+}
+
+.option-button {
+  flex: 1 1 0;           
+  min-width: 80px;      
+  height: 100%;        
   border: 1px solid #bbb;
   border-radius: 10px;
   background: #fff;
   color: #222;
-  font-size: 2rem;
+  font-size: clamp(1.2rem, 3vw, 2rem);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -120,29 +123,25 @@ body {
   justify-content: center;
 }
 
-@media (max-width: 800px) {
-  .options-buttons {
-    gap: 16px;
-  }
-  .test-button,
-  .results-button {
-    height: 40vw;
-    max-height: 40vh;
-    font-size: 1.2rem;
-  }
+
+.buttons-4 .option-button,
+.buttons-5 .option-button,
+.buttons-6 .option-button {
+  flex: 1 1 0;         
+  max-width: none;      
 }
 
 .hearts-row {
   width: 100%;
   display: flex;
-  justify-content: flex-start;   /* Align hearts to the left */
-  align-items: flex-end;
-  position: absolute;
-  left: 20px;
-  bottom: 24px;
+  justify-content: flex-start;
+  align-items: center;
   font-size: 2.5rem;
   gap: 12px;
-  pointer-events: none;          /* Prevent accidental interaction */
+  pointer-events: none;
+  margin-top: 32px;
+  margin-bottom: 24px; 
+  position: static; 
 }
 
 .repeat-button {
@@ -150,8 +149,8 @@ body {
   color: #fff;
   border: none;
   border-radius: 8px;
-  padding: 12px 32px;      /* Increased padding for a bigger button */
-  font-size: 1.8rem;       /* Slightly larger font */
+  padding: 12px 32px;   
+  font-size: 1.8rem;    
   font-weight: 500;
   cursor: pointer;
   margin-left: 16px;
@@ -223,4 +222,18 @@ body {
   background: #f44336 !important;
   color: #fff !important;
   border-color: #b71c1c !important;
+}
+
+.option-button.correct {
+  background: #4caf50 !important;
+  color: #fff !important;
+  border-color: #388e3c !important;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.option-button.incorrect {
+  background: #f44336 !important;
+  color: #fff !important;
+  border-color: #b71c1c !important;
+  transition: background 0.2s, border-color 0.2s;
 }

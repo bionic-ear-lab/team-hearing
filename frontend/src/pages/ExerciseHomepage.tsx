@@ -30,9 +30,9 @@ const ExerciseHomepage: React.FC = () => {
           {exerciseName ? decodeURIComponent(exerciseName) : "Exercise"}
         </h2>
       </div>
-      <div className="options-buttons">
-        <button className="test-button" onClick={handleTestClick}>Test</button>
-        <button className="results-button">Results</button>
+      <div className="options-buttons buttons-2">
+        <button className="option-button" onClick={handleTestClick}>Test</button>
+        <button className="option-button">Results</button>
       </div>
     </div>
   );
