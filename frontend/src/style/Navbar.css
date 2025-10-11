@@ -33,11 +33,17 @@
   left: 50%;
   transform: translateX(-50%);
   color: #fff;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 1px;
   white-space: nowrap;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.navbar-title:hover {
+  opacity: 0.8;
 }
 
 .nav-link {
