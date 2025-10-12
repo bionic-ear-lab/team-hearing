@@ -11,22 +11,26 @@ import '../style/App.css';
 import ExerciseHomepage from './ExerciseHomepage';
 import TestTemplateTest from "./TestTemplateTest"; // Import your test page component
 import PitchResolutionTest from './PitchResolutionTest';
+import { AuthProvider } from '../context/AuthContext';
+import ProtectedRoute from "../routes/ProtectedRoute";
 
 
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path="/homepage" element={<Homepage />} />
+        <Route path="/homepage" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/playnote" element={<PlayNotePage />} />
-        <Route path="/music-exercises" element={<MusicExercises />} />
-        <Route path="/exercise/:exerciseName" element={<ExerciseHomepage />} />
-        <Route path="/test-template-test" element={<TestTemplateTest />} /> {/* Add this line */}
-        <Route path="/pitch-resolution-test" element={<PitchResolutionTest />} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/playnote" element={<ProtectedRoute><PlayNotePage /></ProtectedRoute>} />
+        <Route path="/music-exercises" element={<ProtectedRoute><MusicExercises /></ProtectedRoute>} />
+        <Route path="/exercise/:exerciseName" element={<ProtectedRoute><ExerciseHomepage /></ProtectedRoute>} />
+        <Route path="/test-template-test" element={<ProtectedRoute><TestTemplateTest /></ProtectedRoute>} /> {/* Add this line */}
+        <Route path="/pitch-resolution-test" element={<ProtectedRoute><PitchResolutionTest /></ProtectedRoute>} />
+        {/*Add <ProtectedRoute> </ProtectedRoute> to make it so that not logged in users can't access the page pls*/}
         <Route path="/" element={
           <div style={{ marginTop: '84px', padding: '20px' }}>
             <h1>Hi! Team hearing development in progress....yooooo</h1>
@@ -34,6 +38,7 @@ function App() {
         } />
       </Routes>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 

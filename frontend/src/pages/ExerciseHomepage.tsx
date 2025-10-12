@@ -1,17 +1,25 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext"; 
+import { useContext } from "react";
 import "../style/MusicExercises.css";
 
 const ExerciseHomepage: React.FC = () => {
   const { exerciseName } = useParams<{ exerciseName: string }>();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const handleTestClick = () => {
+    if (!user || !user.id) {
+      alert("User not logged in");
+      return;
+    }
+
+    const userId = user.id; // Get userID from logged in user
     if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
-      navigate("/test-template-test");
+      navigate("/test-template-test", { state: { userId } });
     } else if (exerciseName && decodeURIComponent(exerciseName) === "Pitch Resolution") {
-      navigate("/pitch-resolution-test");
+      navigate("/pitch-resolution-test", { state: { userId } });
     } else {
-      // Add more conditions for other exercises as needed
       alert("No test page configured for this exercise.");
     }
   };
