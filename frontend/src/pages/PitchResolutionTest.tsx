@@ -10,7 +10,7 @@ const PitchResolutionTest: React.FC = () => {
   const numberOfAttempts = 5;
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(5);
   const [showPopup, setShowPopup] = useState(true);
-  
+
   const buttonOptions = ["1", "2"];
   const numberOfButtons = buttonOptions.length;
   const [buttonStates, setButtonStates] = useState<("normal" | "correct" | "incorrect")[]>(
@@ -32,41 +32,73 @@ const PitchResolutionTest: React.FC = () => {
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
   );
 
-  const generateQuestion = () => {
-    // I think this function will have to change a lot when we implement the semitone stuff so please change everything if u need
-    const minGap = 1;
-    const maxGap = 7;
-    const minNoteNumber = 12;
-    const maxNoteNumber = 108;
+  // Use this to make the test adaptive
+  const [minGap, setMinGap] = useState(30);
 
-    const lowerNote = minNoteNumber + Math.floor(Math.random() * ((maxNoteNumber - maxGap) - minNoteNumber + 1));
-    const gap = minGap + Math.floor(Math.random() * (maxGap - minGap + 1));
-    const higherNote = lowerNote + gap;
+  const randomInRange = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
 
-    const higherIsButton1 = Math.random() < 0.5; // randomly assigning which button plays which note
-    if (higherIsButton1) {
-      setNote1(higherNote);
-      setNote2(lowerNote);
-      setHigherNoteButton(1);
-    } else {
-      setNote1(lowerNote);
-      setNote2(higherNote);
-      setHigherNoteButton(2);
+  const createQuestion = (minGap: number) => {
+    const minNoteNumber = -37;
+    const maxNoteNumber = 37;
+
+    let n1 = randomInRange(minNoteNumber, maxNoteNumber);
+    let n2 = randomInRange(minNoteNumber, maxNoteNumber);
+    while (Math.abs(n2 - n1) < minGap) {
+      n2 = randomInRange(minNoteNumber, maxNoteNumber);
     }
-  }
+
+    const button1GetsFirst = Math.random() < 0.5;
+    const noteA = button1GetsFirst ? n1 : n2;
+    const noteB = button1GetsFirst ? n2 : n1;
+    const higherButton = noteA > noteB ? 1 : 2;
+
+    return { noteA, noteB, higherButton };
+  };
+
+  const setQuestion = () => {
+    const { noteA, noteB, higherButton } = createQuestion(minGap);
+    setNote1(noteA);
+    setNote2(noteB);
+    setHigherNoteButton(higherButton);
+  };
+
+  const tryPlayNotes = async (n1: number, n2: number) => {
+    await playPianoNote(n1);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await playPianoNote(n2);
+  };
 
   const playNotes = async () => {
     if (isPlaying) return;
     setIsPlaying(true);
-    playPianoNote(note1);
-    await new Promise(resolve => setTimeout(resolve, 1000)); // pause between notes
-    playPianoNote(note2);
+
+    let success = false;
+    let attempts = 0;
+    let attemptsLimit = 10;
+
+    while (!success && attempts < attemptsLimit) {
+      attempts++;
+      try {
+        await tryPlayNotes(note1, note2);
+        success = true;
+      } catch (error) {
+        console.warn(`Attempt ${attempts}: missing audio file(s), regenerating question.`);
+        setQuestion();
+        await new Promise(resolve => setTimeout(resolve, 100)); // small delay before retry
+      }
+    }
+
+    if (!success) {
+      console.error("Failed to find valid audio files after multiple attempts.");
+    }
+
     setIsPlaying(false);
-  }
+  };
 
   // initialize first question
   useEffect(() => {
-    generateQuestion();
+    setQuestion();
   }, []);
 
   // play first question when popup closes
@@ -88,11 +120,11 @@ const PitchResolutionTest: React.FC = () => {
     playNotes();
   };
 
-  const handleAnswer = async (buttonClicked : number) => {
+  const handleAnswer = async (buttonClicked: number) => {
     if (isPlaying || buttonStates[0] !== "normal" || buttonStates[1] !== "normal") return;
-    
+
     const isCorrect = (buttonClicked + 1) === higherNoteButton;
-    
+
     if (isCorrect) {
       correct(buttonClicked);
     } else { // incorrect
@@ -100,7 +132,7 @@ const PitchResolutionTest: React.FC = () => {
     }
 
     await new Promise(resolve => setTimeout(resolve, 1000)); // wait for animation to finish
-    generateQuestion(); // new question
+    setQuestion(); // new question
     setNewQuestion(true); // play new question!!
   };
 
@@ -108,7 +140,7 @@ const PitchResolutionTest: React.FC = () => {
     const newStates = [...buttonStates];
     newStates[buttonIndex] = "correct";
     setButtonStates(newStates);
-    
+
     setTimeout(() => {
       setButtonStates(prevStates => {
         const resetStates = [...prevStates];
@@ -122,7 +154,7 @@ const PitchResolutionTest: React.FC = () => {
     const newStates = [...buttonStates];
     newStates[buttonIndex] = "incorrect";
     setButtonStates(newStates);
-    
+
     setTimeout(() => {
       setButtonStates(prevStates => {
         const resetStates = [...prevStates];
@@ -130,7 +162,7 @@ const PitchResolutionTest: React.FC = () => {
         return resetStates;
       });
     }, 1000);
-    
+
     setNumberOfAttemptsLeft((prev) => Math.max(prev - 1, 0));
   };
 
@@ -152,7 +184,7 @@ const PitchResolutionTest: React.FC = () => {
           onClick={() => navigate(-1)}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         <h2 className="music-exercises-title" style={{ margin: 0 }}>{question}</h2>
@@ -163,7 +195,7 @@ const PitchResolutionTest: React.FC = () => {
           <button
             key={i}
             className={`option-button ${buttonStates[i]}`}
-            onClick={() => handleAnswer(i)} 
+            onClick={() => handleAnswer(i)}
           >
             {buttonText}
           </button>
