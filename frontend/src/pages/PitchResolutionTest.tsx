@@ -116,6 +116,7 @@ const PitchResolutionTest: React.FC = () => {
     if (!showPopup && note1 && note2) {
       playNotes();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showPopup]);
 
   // play new question when there is a new question
@@ -183,7 +184,7 @@ const PitchResolutionTest: React.FC = () => {
 
   const handleEndTest = async () => {
     setIsSaving(true);
-    
+
     const gap = firstWrongAnswerGap ?? 0;
 
     if (userId) {

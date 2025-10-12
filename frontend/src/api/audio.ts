@@ -27,13 +27,13 @@ export async function playAudio(fileUrl: string): Promise<void> {
 // All files are pitch shifted versions of the A2 piano note
 // A2 = 45 (Lowest A on a standard piano)
 export async function playPianoNote(noteShiftNumber: number): Promise<void> {
-  var file_name = "piano_45_";
+  let file_name = "piano_45_";
+  const absNoteShiftNumber = Math.abs(noteShiftNumber);
   if (noteShiftNumber < 0) {
-    noteShiftNumber = -noteShiftNumber;
-    file_name += `${noteShiftNumber}_n`;
+    file_name += `${absNoteShiftNumber}_n`;
   }
   else {
-    file_name += `${noteShiftNumber}`;
+    file_name += `${absNoteShiftNumber}`;
   }
   const filePath = '/musescore/library/piano/pitchshifted/' + file_name + '.wav';
 
