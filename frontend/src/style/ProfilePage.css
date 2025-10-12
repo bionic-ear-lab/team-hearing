@@ -70,7 +70,6 @@
 }
 
 .section-body input,
-.section-body select,
 .section-body textarea {
   display: inline-block;
   width: 100%; 
@@ -103,8 +102,3 @@
   margin-bottom: 12px;
 }
 
-.section-body label {
-  width: 140px;
-  margin-right: 16px;
-  flex-shrink: 0;
-}
