@@ -41,7 +41,8 @@ const PitchResolutionTest: React.FC = () => {
   );
 
   // Use this to make the test adaptive
-  const [minGap, setMinGap] = useState(30);
+  const DEFAULT_MIN_GAP = 30;
+  const [minGap, setMinGap] = useState(DEFAULT_MIN_GAP);
 
   const randomInRange = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -85,9 +86,9 @@ const PitchResolutionTest: React.FC = () => {
 
     let success = false;
     let attempts = 0;
-    let attemptsLimit = 10;
+    const MAX_AUDIO_RETRY_ATTEMPTS = 10;
 
-    while (!success && attempts < attemptsLimit) {
+    while (!success && attempts < MAX_AUDIO_RETRY_ATTEMPTS) {
       attempts++;
       try {
         await tryPlayNotes(note1, note2);

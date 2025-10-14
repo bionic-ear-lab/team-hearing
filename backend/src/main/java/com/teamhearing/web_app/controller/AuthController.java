@@ -1,4 +1,5 @@
 package com.teamhearing.web_app.controller;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,11 @@ public class AuthController {
   public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, String> body) {
     System.out.println("Signup endpoint hit with data: " + body);
     User user = userService.signup(
-      body.get("username"),
-      body.get("email"),
-      body.get("password"),
-      body.get("birthdate"),
-      body.get("gender")
-    );
+        body.get("username"),
+        body.get("email"),
+        body.get("password"),
+        body.get("birthdate"),
+        body.get("gender"));
     return ResponseEntity.ok(userToMap(user));
   }
 
@@ -42,7 +42,10 @@ public class AuthController {
   @PostMapping("/validate")
   public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
     try {
-      String userId = authHeader.replace("Bearer ", "");
+      if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        return ResponseEntity.status(401).build();
+      }
+      String userId = authHeader.substring("Bearer ".length()).trim();
       User user = userService.findById(Long.parseLong(userId));
       if (user == null) {
         return ResponseEntity.status(401).build();

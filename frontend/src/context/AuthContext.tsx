@@ -13,10 +13,10 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  setUser: () => {},
+  setUser: () => { },
   login: async () => ({} as AuthResponse),
   signup: async () => ({} as AuthResponse),
-  logout: () => {},
+  logout: () => { },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -41,19 +41,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-const login = async (username: string, password: string): Promise<AuthResponse> => {
-  const response = await loginAPI(username, password);
-  localStorage.setItem('authToken', response.id); // Store user ID as token
-  setUser(response);
-  return response;
-};
+  const login = async (username: string, password: string): Promise<AuthResponse> => {
+    const response = await loginAPI(username, password);
+    localStorage.setItem('authToken', String(response.id)); // Store user ID as token
+    setUser(response);
+    return response;
+  };
 
-const handleSignup = async (username: string, email: string, password: string, birthdate: string, gender: string): Promise<AuthResponse> => {
-  const response = await signup(username, email, password, birthdate, gender);
-  localStorage.setItem('authToken', response.id); // Store user ID as token
-  setUser(response);
-  return response;
-};
+  const handleSignup = async (username: string, email: string, password: string, birthdate: string, gender: string): Promise<AuthResponse> => {
+    const response = await signup(username, email, password, birthdate, gender);
+    localStorage.setItem('authToken', String(response.id)); // Store user ID as token
+    setUser(response);
+    return response;
+  };
 
   const logout = () => {
     localStorage.removeItem('authToken');
