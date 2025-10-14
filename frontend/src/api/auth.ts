@@ -1,5 +1,6 @@
+
 export interface AuthResponse {
-  id: string;
+  id: number;  // ← CHANGED: was string, now number
   username: string;
   email: string;
   birthdate: string;
@@ -13,9 +14,12 @@ export async function login(username: string, password: string): Promise<AuthRes
     body: JSON.stringify({ username, password })
   });
   if (!res.ok) {
-    throw new Error("Login failed");
+    const errorText = await res.text();
+    throw new Error(errorText || "Login failed");
   }
-  return res.json();
+  const data = await res.json();
+  console.log("Login response:", data); 
+  return data;
 }
 
 export async function signup(username: string, email: string, password: string, birthdate: string, gender: string): Promise<AuthResponse> {
@@ -25,9 +29,12 @@ export async function signup(username: string, email: string, password: string, 
     body: JSON.stringify({ username, email, password, birthdate, gender })
   });
   if (!res.ok) {
-    throw new Error("Signup failed");
+    const errorText = await res.text();
+    throw new Error(errorText || "Signup failed");
   }
-  return res.json();
+  const data = await res.json();
+  console.log("Signup response:", data);  
+  return data;
 }
 
 export async function validateToken(token: string): Promise<AuthResponse> {
