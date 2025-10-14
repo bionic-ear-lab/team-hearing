@@ -1,0 +1,39 @@
+import React, { useContext } from 'react';
+import '../style/Navbar.css';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+
+const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, logout } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-content">
+        <div className="navbar-left">
+          <span className="nav-link" onClick={() => navigate('/homepage')}>Home</span>
+        </div>
+        <span
+          className="navbar-title"
+          onClick={() => {
+            console.log('TeamHearing clicked!');
+            navigate('/homepage');
+          }}
+        >
+          TeamHearing
+        </span>
+        <div className="navbar-right">
+          <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
+          <span className="nav-link" onClick={handleLogout}>Log Out</span>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
