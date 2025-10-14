@@ -1,10 +1,11 @@
 
 export interface AuthResponse {
-  id: number;  // ← CHANGED: was string, now number
+  id: number;
   username: string;
   email: string;
   birthdate: string;
   gender: string;
+  token?: string;
 }
 
 export async function login(username: string, password: string): Promise<AuthResponse> {

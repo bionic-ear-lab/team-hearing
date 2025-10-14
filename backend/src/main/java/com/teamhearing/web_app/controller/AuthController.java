@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.teamhearing.web_app.entity.User;
 import com.teamhearing.web_app.service.UserService;
+import com.teamhearing.web_app.util.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
@@ -18,6 +19,9 @@ import com.teamhearing.web_app.service.UserService;
 public class AuthController {
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private JwtUtil jwtUtil;
 
   @PostMapping("/signup")
   public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, String> body) {
@@ -29,22 +33,25 @@ public class AuthController {
       body.get("birthdate"),
       body.get("gender")
     );
-    return ResponseEntity.ok(userToMap(user));
+    String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+    return ResponseEntity.ok(userToMapWithToken(user, token));
   }
 
   @PostMapping("/login")
   public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
     System.out.println("Login endpoint hit with data: " + body);
     User user = userService.login(body.get("username"), body.get("password"));
-    return ResponseEntity.ok(userToMap(user));
+    String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+    return ResponseEntity.ok(userToMapWithToken(user, token));
   }
 
   @PostMapping("/validate")
   public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
     try {
-      String userId = authHeader.replace("Bearer ", "");
-      User user = userService.findById(Long.parseLong(userId));
-      if (user == null) {
+      String token = authHeader.replace("Bearer ", "");
+      Long userId = jwtUtil.extractUserId(token);
+      User user = userService.findById(userId);
+      if (user == null || !jwtUtil.validateToken(token, userId)) {
         return ResponseEntity.status(401).build();
       }
       return ResponseEntity.ok(userToMap(user));
@@ -60,6 +67,12 @@ public class AuthController {
     response.put("email", user.getEmail());
     response.put("birthdate", user.getBirthdate());
     response.put("gender", user.getGender());
+    return response;
+  }
+
+  private Map<String, Object> userToMapWithToken(User user, String token) {
+    Map<String, Object> response = userToMap(user);
+    response.put("token", token);
     return response;
   }
 }

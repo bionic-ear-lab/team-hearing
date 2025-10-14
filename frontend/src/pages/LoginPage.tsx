@@ -19,18 +19,13 @@ export default function LoginPage() {
     
     try {
       const response = await login(username, password);
-      console.log("Login response:", response);  // ← ADDED
-      console.log("User ID:", response.id, "Type:", typeof response.id);  // ← ADDED
-      
-      // Store the ID as a string
-      localStorage.setItem('authToken', String(response.id));  // ← CHANGED: added String()
-      console.log("Stored token:", localStorage.getItem('authToken'));  // ← ADDED
-      
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+      }
       setUser(response);
       alert("Login successful!");
       navigate("/homepage");
     } catch (err) {
-      console.error("Login error:", err);  // ← ADDED
       alert("Login failed: " + (err as Error).message);
     }
   };
