@@ -10,19 +10,27 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext); // Get setUser from context
 
+
   const handleLogin = async () => {
     if (!username || !password) {
-      alert("Please fill in all fields");
+      alert("Please enter both username and password");
       return;
     }
-
+    
     try {
-      const user = await login(username, password); // Returns User object
-      setUser(user); // Save user to context
-      localStorage.setItem('authToken', JSON.stringify(user)); 
-      alert("Login successful");
+      const response = await login(username, password);
+      console.log("Login response:", response);  // ← ADDED
+      console.log("User ID:", response.id, "Type:", typeof response.id);  // ← ADDED
+      
+      // Store the ID as a string
+      localStorage.setItem('authToken', String(response.id));  // ← CHANGED: added String()
+      console.log("Stored token:", localStorage.getItem('authToken'));  // ← ADDED
+      
+      setUser(response);
+      alert("Login successful!");
       navigate("/homepage");
     } catch (err) {
+      console.error("Login error:", err);  // ← ADDED
       alert("Login failed: " + (err as Error).message);
     }
   };
