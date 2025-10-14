@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamhearing.web_app.entity.User;
 import com.teamhearing.web_app.repository.UserRepository;
+import com.teamhearing.web_app.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/users")
@@ -29,30 +30,32 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     
+    @Autowired
+    private JwtUtil jwtUtil;
+    
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             System.out.println("Authorization header received: '" + authHeader + "'");
             
-            Long userId = null;
-            
-            if (authHeader != null && !authHeader.isEmpty()) {
-                authHeader = authHeader.trim();
-                
-                if (authHeader.startsWith("Bearer ")) {
-                    String token = authHeader.substring(7).trim();
-                    System.out.println("Extracted Bearer token: '" + token + "'");
-                    userId = Long.valueOf(token);
-                } else {
-                    System.out.println("Parsing token directly: '" + authHeader + "'");
-                    userId = Long.valueOf(authHeader);
-                }
-            }
-            
-            if (userId == null) {
-                System.out.println("No user ID found in authorization header");
+            if (authHeader == null || authHeader.isEmpty()) {
+                System.out.println("No authorization header provided");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "No authentication token provided"));
+            }
+            
+            String token = authHeader.trim();
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).trim();
+            }
+            
+            System.out.println("Extracting user ID from JWT token");
+            Long userId = jwtUtil.extractUserId(token);
+            
+            if (userId == null) {
+                System.out.println("No user ID found in token");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid token"));
             }
             
             System.out.println("Fetching user with ID: " + userId);
@@ -76,11 +79,6 @@ public class UserController {
             response.put("gender", user.getGender() != null ? user.getGender() : "");
             
             return ResponseEntity.ok(response);
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid user ID format. Authorization header: '" + authHeader + "'");
-            System.err.println("Error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "Invalid user ID format: " + e.getMessage()));
         } catch (Exception e) {
             System.err.println("Error fetching user: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -95,21 +93,22 @@ public class UserController {
         try {
             System.out.println("Update request received: " + req);
             
-            Long userId = null;
-            if (authHeader != null && !authHeader.isEmpty()) {
-                authHeader = authHeader.trim();
-                if (authHeader.startsWith("Bearer ")) {
-                    userId = Long.valueOf(authHeader.substring(7).trim());
-                } else {
-                    userId = Long.valueOf(authHeader);
-                }
-            } else if (req.containsKey("id")) {
-                userId = Long.valueOf(req.get("id").toString());
+            if (authHeader == null || authHeader.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "No authentication token provided"));
             }
+            
+            String token = authHeader.trim();
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).trim();
+            }
+            
+            System.out.println("Extracting user ID from JWT token");
+            Long userId = jwtUtil.extractUserId(token);
             
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "No authentication token provided"));
+                    .body(Map.of("error", "Invalid token"));
             }
             
             System.out.println("Looking for user with ID: " + userId);
@@ -155,7 +154,7 @@ public class UserController {
             
             return ResponseEntity.ok(Map.of("message", "Profile updated successfully"));
             
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             System.err.println("Error updating user: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Error updating user: " + e.getMessage()));

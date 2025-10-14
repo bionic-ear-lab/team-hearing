@@ -35,7 +35,7 @@ export default function ProfilePage() {
     
     fetch("/api/users/me", {
       headers: {
-        'Authorization': authToken  // ← ADDED: send token in header
+        'Authorization': `Bearer ${authToken}`
       }
     })
       .then((res) => {
@@ -84,7 +84,7 @@ export default function ProfilePage() {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": authToken  // ← ADDED: send token in header
+          "Authorization": `Bearer ${authToken}`
         },
         body: JSON.stringify(profile),
       });
