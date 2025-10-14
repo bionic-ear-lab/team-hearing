@@ -10,7 +10,7 @@
   border-radius: 12px;
   padding: 32px 24px;
   background: #fff;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -38,4 +38,14 @@
 
 .login-button:hover {
   background: #4b7ca8;
+}
+
+.login-link {
+  color: black;
+}
+
+.login-link-action {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #000000ff;
 }

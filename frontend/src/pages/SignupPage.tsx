@@ -83,11 +83,11 @@ export default function SignupPage() {
       const response = await signup(username, email, password, birthdate, gender);
       console.log("Signup response:", response);  // ← ADDED
       console.log("User ID:", response.id, "Type:", typeof response.id);  // ← ADDED
-      
+
       // Store the ID as a string
       localStorage.setItem('authToken', String(response.id));  // ← CHANGED: added String()
       console.log("Stored token:", localStorage.getItem('authToken'));  // ← ADDED
-      
+
       setUser(response);
       alert("Signup successful!");
       navigate("/homepage");
@@ -114,7 +114,7 @@ export default function SignupPage() {
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
-        
+
         {/* Password input with show/hide toggle */}
         <div style={{ position: "relative", width: "100%" }}>
           <input
