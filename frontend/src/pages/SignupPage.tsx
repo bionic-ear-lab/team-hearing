@@ -125,7 +125,7 @@ export default function SignupPage() {
             onChange={handlePasswordChange}
             onFocus={() => setPasswordFocused(true)}
             onBlur={() => setPasswordFocused(false)}
-            style={{ paddingRight: "40px" }}
+            style={{ paddingRight: "60px", width: "100%" }}
           />
           <button
             type="button"
@@ -138,10 +138,12 @@ export default function SignupPage() {
               background: "none",
               border: "none",
               cursor: "pointer",
-              fontSize: "18px"
+              fontSize: "12px",
+              color: "#68a5d0",
+              fontWeight: "500"
             }}
           >
-            {showPassword ? "👁️" : "👁️‍🗨️"}
+            {showPassword ? "Hide" : "Show"}
           </button>
         </div>
 
