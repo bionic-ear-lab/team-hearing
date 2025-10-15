@@ -5,6 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 backend/src/main/resources/application-local.properties
+backend/src/main/resources/application.properties
 
 ### Logs ###
 *.log
