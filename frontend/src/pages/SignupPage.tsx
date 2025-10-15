@@ -81,18 +81,18 @@ export default function SignupPage() {
 
     try {
       const response = await signup(username, email, password, birthdate, gender);
-      console.log("Signup response:", response);  // ← ADDED
-      console.log("User ID:", response.id, "Type:", typeof response.id);  // ← ADDED
+      console.log("Signup response:", response);  
+      console.log("User ID:", response.id, "Type:", typeof response.id);  
 
       // Store the ID as a string
-      localStorage.setItem('authToken', String(response.id));  // ← CHANGED: added String()
-      console.log("Stored token:", localStorage.getItem('authToken'));  // ← ADDED
+      localStorage.setItem('authToken', String(response.id));  
+      console.log("Stored token:", localStorage.getItem('authToken')); 
 
       setUser(response);
       alert("Signup successful!");
       navigate("/homepage");
     } catch (err) {
-      console.error("Signup error:", err);  // ← ADDED
+      console.error("Signup error:", err);  
       alert("Signup failed: " + (err as Error).message);
     }
   };
