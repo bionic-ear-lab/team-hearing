@@ -4,7 +4,7 @@ import "../style/ProfilePage.css";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({
-    id: 0,  // ← CHANGED: was "", now 0
+    id: 0,  
     name: "",
     codename: "",
     email: "",
@@ -35,7 +35,7 @@ export default function ProfilePage() {
 
     fetch("/api/users/me", {
       headers: {
-        'Authorization': authToken  // ← ADDED: send token in header
+        'Authorization': authToken 
       }
     })
       .then((res) => {
@@ -64,7 +64,7 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     // Validate that we have an ID
-    if (!profile.id || profile.id === 0) {  // ← CHANGED: check for 0 instead of ""
+    if (!profile.id || profile.id === 0) {  
       setSaveStatus("Error: User ID is missing. Please log in again.");
       console.error("Cannot save: profile.id is missing or invalid");
       return;
@@ -84,7 +84,7 @@ export default function ProfilePage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": authToken  // ← ADDED: send token in header
+          "Authorization": authToken  
         },
         body: JSON.stringify(profile),
       });
