@@ -27,6 +27,8 @@ const PitchResolutionTest: React.FC = () => {
   const [note2, setNote2] = useState(0);
   const [higherNoteButton, setHigherNoteButton] = useState<1 | 2>(1);
   const [currentGap, setCurrentGap] = useState(0);
+  
+  const [currentSemitoneGap, setCurrentSemitoneGap] = useState(0.0);
 
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
   const [firstWrongAnswerGap, setFirstWrongAnswerGap] = useState<number | null>(null);
@@ -41,7 +43,8 @@ const PitchResolutionTest: React.FC = () => {
   );
 
   // Use this to make the test adaptive
-  const [minGap, setMinGap] = useState(30);
+  const DEFAULT_MIN_GAP = 34; // 8 semitones
+  const [minGap, setMinGap] = useState(DEFAULT_MIN_GAP);
 
   const randomInRange = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -50,11 +53,8 @@ const PitchResolutionTest: React.FC = () => {
     const minNoteNumber = -37;
     const maxNoteNumber = 37;
 
-    let n1 = randomInRange(minNoteNumber, maxNoteNumber);
-    let n2 = randomInRange(minNoteNumber, maxNoteNumber);
-    while (Math.abs(n2 - n1) < minGap) {
-      n2 = randomInRange(minNoteNumber, maxNoteNumber);
-    }
+    let n1 = randomInRange(minNoteNumber, maxNoteNumber - minGap);
+    let n2 = n1 + minGap;
 
     const button1GetsFirst = Math.random() < 0.5;
     const noteA = button1GetsFirst ? n1 : n2;
@@ -71,6 +71,10 @@ const PitchResolutionTest: React.FC = () => {
     setNote2(noteB);
     setHigherNoteButton(higherButton);
     setCurrentGap(gap);
+
+    //const semitone_gap = 8.0;
+    const semitone_gap = Math.sign(gap) * Math.pow(2, (-8 + (Math.abs(gap) - 1) / 3.0));
+    setCurrentSemitoneGap(semitone_gap)
   };
 
   const tryPlayNotes = async (n1: number, n2: number) => {
@@ -85,9 +89,9 @@ const PitchResolutionTest: React.FC = () => {
 
     let success = false;
     let attempts = 0;
-    let attemptsLimit = 10;
+    const MAX_AUDIO_RETRY_ATTEMPTS = 10;
 
-    while (!success && attempts < attemptsLimit) {
+    while (!success && attempts < MAX_AUDIO_RETRY_ATTEMPTS) {
       attempts++;
       try {
         await tryPlayNotes(note1, note2);
@@ -120,11 +124,18 @@ const PitchResolutionTest: React.FC = () => {
 
   // play new question when there is a new question
   useEffect(() => {
-    if (newQuestion && note1 && note2) {
-      playNotes();
+    if (newQuestion) {
+      setQuestion();
       setNewQuestion(false);
     }
-  }, [newQuestion, note1, note2]);
+  }, [newQuestion]);
+
+  // play notes whenever note1 or note2 changes (but not on initial mount)
+  useEffect(() => {
+    if (note1 !== 0 && note2 !== 0 && !showPopup && numberOfAttemptsLeft > 0) {
+      playNotes();
+    }
+  }, [note1, note2]);
 
   const handleRepeat = () => {
     playNotes();
@@ -137,18 +148,29 @@ const PitchResolutionTest: React.FC = () => {
 
     if (isCorrect) {
       correct(buttonClicked);
+      if ((minGap - 1) > 0) {
+        setMinGap(minGap - 1);
+      }
     } else {
       incorrect(buttonClicked);
+      if ((minGap + 3) < DEFAULT_MIN_GAP) {
+        setMinGap(minGap + 3);
+      } else {
+        setMinGap(DEFAULT_MIN_GAP);
+      }
       if (firstWrongAnswerGap === null) {
         setFirstWrongAnswerGap(currentGap);
       }
       setWrongAnswers(prev => [...prev, questionNumber]);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setQuestion();
-    setNewQuestion(true);
-    setQuestionNumber(prev => prev + 1);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    if (numberOfAttemptsLeft > 0) {
+      //setQuestion();
+      setNewQuestion(true);
+      setQuestionNumber(prev => prev + 1);
+    }
   };
 
   const correct = (buttonIndex: number) => {
@@ -225,7 +247,7 @@ const PitchResolutionTest: React.FC = () => {
           <div className="popup-content">
             <h3>Test Complete!</h3>
             <p>Wrong answers: {wrongAnswers.length}</p>
-            <p>First wrong answer gap: {firstWrongAnswerGap ?? 'No mistakes!'}</p>
+            <p>Pitch Discrimination Threshold: {currentSemitoneGap.toFixed(2)}</p>
             <button onClick={handleEndTest} disabled={isSaving}>
               {isSaving ? 'Saving...' : 'Finish'}
             </button>
@@ -263,6 +285,9 @@ const PitchResolutionTest: React.FC = () => {
         {hearts.map((heart, idx) => (
           <span key={idx}>{heart}</span>
         ))}
+      </div>
+      <div className="pitch-info">
+        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones
       </div>
     </div>
   );

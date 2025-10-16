@@ -4,7 +4,7 @@ import "../style/ProfilePage.css";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({
-    id: 0,  // ← CHANGED: was "", now 0
+    id: 0,  
     name: "",
     codename: "",
     email: "",
@@ -21,21 +21,21 @@ export default function ProfilePage() {
   // Fetch user profile from backend on mount
   useEffect(() => {
     console.log("Fetching user profile...");
-    
+
     // Get auth token from localStorage
     const authToken = localStorage.getItem('authToken');
     console.log("Auth token:", authToken);
-    
+
     if (!authToken) {
       console.error("No auth token found");
       setSaveStatus("Please log in again");
       setLoading(false);
       return;
     }
-    
+
     fetch("/api/users/me", {
       headers: {
-        'Authorization': authToken  // ← ADDED: send token in header
+        'Authorization': authToken 
       }
     })
       .then((res) => {
@@ -64,9 +64,9 @@ export default function ProfilePage() {
 
   const handleSaveProfile = async () => {
     // Validate that we have an ID
-    if (!profile.id || profile.id === 0) {  // ← CHANGED: check for 0 instead of ""
+    if (!profile.id || profile.id === 0) {  
       setSaveStatus("Error: User ID is missing. Please log in again.");
-      console.error("Cannot save: profile.id is empty");
+      console.error("Cannot save: profile.id is missing or invalid");
       return;
     }
 
@@ -78,21 +78,21 @@ export default function ProfilePage() {
 
     console.log("Saving profile:", profile);
     setSaveStatus("Saving...");
-    
+
     try {
       const response = await fetch("/api/users/update", {
         method: "PUT",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          "Authorization": authToken  // ← ADDED: send token in header
+          "Authorization": authToken  
         },
         body: JSON.stringify(profile),
       });
-      
+
       console.log("Update response status:", response.status);
       const result = await response.json();
       console.log("Update response:", result);
-      
+
       if (response.ok) {
         setSaveStatus(result.message || "Profile updated successfully!");
         setIsEditingProfile(false);
@@ -116,11 +116,11 @@ export default function ProfilePage() {
   }
 
   // Show error if profile didn't load
-  if (!profile.id) {  
+  if (!profile.id) {
     return (
       <div className="profile-container">
         <div className="section">
-          <p style={{color: 'red'}}>Failed to load profile. Please log in again.</p>
+          <p style={{ color: 'red' }}>Failed to load profile. Please log in again.</p>
         </div>
       </div>
     );
@@ -206,17 +206,17 @@ export default function ProfilePage() {
                 <option value="Other">Other</option>
               </select>
             </div>
-            <button 
-              className="save-btn" 
+            <button
+              className="save-btn"
               style={{
-                marginTop: '10px', 
-                padding: '8px 16px', 
+                marginTop: '10px',
+                padding: '8px 16px',
                 cursor: 'pointer',
                 backgroundColor: '#68a5d0',
                 color: 'white',
                 border: 'none',
                 borderRadius: '5px'
-              }} 
+              }}
               onClick={handleSaveProfile}
             >
               Save Changes
@@ -260,8 +260,8 @@ export default function ProfilePage() {
         {isEditingDevices ? (
           <div className="section-body">
             <label><b>Devices:</b></label>
-            <textarea 
-              value={devices} 
+            <textarea
+              value={devices}
               onChange={(e) => setDevices(e.target.value)}
               style={{ minHeight: '100px', width: '100%' }}
             />
