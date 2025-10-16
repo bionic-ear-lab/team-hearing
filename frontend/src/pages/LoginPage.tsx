@@ -16,21 +16,21 @@ export default function LoginPage() {
       alert("Please enter both username and password");
       return;
     }
-    
+
     try {
       const response = await login(username, password);
-      console.log("Login response:", response);  // ← ADDED
-      console.log("User ID:", response.id, "Type:", typeof response.id);  // ← ADDED
-      
+      console.log("Login response:", response);  
+      console.log("User ID:", response.id, "Type:", typeof response.id);  
+
       // Store the ID as a string
-      localStorage.setItem('authToken', String(response.id));  // ← CHANGED: added String()
-      console.log("Stored token:", localStorage.getItem('authToken'));  // ← ADDED
-      
+      localStorage.setItem('authToken', String(response.id));  
+      console.log("Stored token:", localStorage.getItem('authToken')); 
+
       setUser(response);
       alert("Login successful!");
       navigate("/homepage");
     } catch (err) {
-      console.error("Login error:", err);  // ← ADDED
+      console.error("Login error:", err);
       alert("Login failed: " + (err as Error).message);
     }
   };
@@ -52,8 +52,8 @@ export default function LoginPage() {
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
-        <p className="login-link" style={{ color: "black" }}>
-        Don't have an account? <span onClick={() => navigate("/signup")} style={{ textDecoration: "underline", cursor: "pointer", color: "#000000ff" }}>Sign Up!</span>
+        <p className="login-link">
+          Don't have an account? <span className="login-link-action" onClick={() => navigate("/signup")}>Sign Up!</span>
         </p>
         <button className="login-button" onClick={handleLogin}>Login</button>
       </div>
