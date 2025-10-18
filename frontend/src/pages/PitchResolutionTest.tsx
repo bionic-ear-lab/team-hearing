@@ -27,7 +27,7 @@ const PitchResolutionTest: React.FC = () => {
   const [note2, setNote2] = useState(0);
   const [higherNoteButton, setHigherNoteButton] = useState<1 | 2>(1);
   const [currentGap, setCurrentGap] = useState(0);
-  
+
   const [currentSemitoneGap, setCurrentSemitoneGap] = useState(0.0);
 
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
@@ -42,9 +42,11 @@ const PitchResolutionTest: React.FC = () => {
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
   );
 
-  // Use this to make the test adaptive
-  const DEFAULT_MIN_GAP = 34; // 8 semitones
-  const [minGap, setMinGap] = useState(DEFAULT_MIN_GAP);
+
+  // CHOOSING NOTES
+
+  const DEFAULT_GAP = 34; // 8 semitones
+  const [minGap, setMinGap] = useState(DEFAULT_GAP);
 
   const randomInRange = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
@@ -72,10 +74,12 @@ const PitchResolutionTest: React.FC = () => {
     setHigherNoteButton(higherButton);
     setCurrentGap(gap);
 
-    //const semitone_gap = 8.0;
     const semitone_gap = Math.sign(gap) * Math.pow(2, (-8 + (Math.abs(gap) - 1) / 3.0));
     setCurrentSemitoneGap(semitone_gap)
   };
+
+
+  // PLAYING NOTES
 
   const tryPlayNotes = async (n1: number, n2: number) => {
     await playPianoNote(n1);
@@ -141,6 +145,9 @@ const PitchResolutionTest: React.FC = () => {
     playNotes();
   };
 
+
+  // DEALING WITH USER CHOICE 
+
   const handleAnswer = async (buttonClicked: number) => {
     if (isPlaying || buttonStates[0] !== "normal" || buttonStates[1] !== "normal") return;
 
@@ -153,10 +160,10 @@ const PitchResolutionTest: React.FC = () => {
       }
     } else {
       incorrect(buttonClicked);
-      if ((minGap + 3) < DEFAULT_MIN_GAP) {
+      if ((minGap + 3) < DEFAULT_GAP) {
         setMinGap(minGap + 3);
       } else {
-        setMinGap(DEFAULT_MIN_GAP);
+        setMinGap(DEFAULT_GAP);
       }
       if (firstWrongAnswerGap === null) {
         setFirstWrongAnswerGap(currentGap);
@@ -167,7 +174,6 @@ const PitchResolutionTest: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     if (numberOfAttemptsLeft > 0) {
-      //setQuestion();
       setNewQuestion(true);
       setQuestionNumber(prev => prev + 1);
     }
@@ -229,6 +235,7 @@ const PitchResolutionTest: React.FC = () => {
   };
 
   const testOver = numberOfAttemptsLeft === 0;
+
 
   return (
     <div className="music-exercises-container">
