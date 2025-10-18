@@ -26,8 +26,6 @@ const PitchResolutionTest: React.FC = () => {
   const [note1, setNote1] = useState(0);
   const [note2, setNote2] = useState(0);
   const [higherNoteButton, setHigherNoteButton] = useState<1 | 2>(1);
-  const [currentGap, setCurrentGap] = useState(0);
-
   const [currentSemitoneGap, setCurrentSemitoneGap] = useState(0.0);
 
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
@@ -45,37 +43,33 @@ const PitchResolutionTest: React.FC = () => {
 
   // CHOOSING NOTES
 
-  const DEFAULT_GAP = 34; // 8 semitones
-  const [minGap, setMinGap] = useState(DEFAULT_GAP);
+  const DEFAULT_INDEX = 34; // 8 semitones
+  const [pitchIndex, setPitchIndex] = useState(DEFAULT_INDEX);
 
-  const randomInRange = (min: number, max: number) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
+  const randomDirection = () => (Math.random() < 0.5 ? 1 : -1);
 
-  const createQuestion = (minGap: number) => {
-    const minNoteNumber = -37;
-    const maxNoteNumber = 37;
-
-    let n1 = randomInRange(minNoteNumber, maxNoteNumber - minGap);
-    let n2 = n1 + minGap;
+  const createQuestion = (index: number) => {
+    const direction = randomDirection();
+    const n1 = 0;
+    const n2 = direction * index;
 
     const button1GetsFirst = Math.random() < 0.5;
     const noteA = button1GetsFirst ? n1 : n2;
     const noteB = button1GetsFirst ? n2 : n1;
     const higherButton: 1 | 2 = noteA > noteB ? 1 : 2;
-    const gap = Math.abs(noteA - noteB);
+    const gap = index;
 
     return { noteA, noteB, higherButton, gap };
   };
 
   const setQuestion = () => {
-    const { noteA, noteB, higherButton, gap } = createQuestion(minGap);
+    const { noteA, noteB, higherButton, gap } = createQuestion(pitchIndex);
     setNote1(noteA);
     setNote2(noteB);
     setHigherNoteButton(higherButton);
-    setCurrentGap(gap);
 
-    const semitone_gap = Math.sign(gap) * Math.pow(2, (-8 + (Math.abs(gap) - 1) / 3.0));
-    setCurrentSemitoneGap(semitone_gap)
+    const semitone_gap = Math.pow(2, -8 + (gap - 1) / 3);
+    setCurrentSemitoneGap(semitone_gap);
   };
 
 
@@ -121,7 +115,7 @@ const PitchResolutionTest: React.FC = () => {
 
   // play first question when popup closes
   useEffect(() => {
-    if (!showPopup && note1 && note2) {
+    if (!showPopup && note1 !== null && note2 !== null) {
       playNotes();
     }
   }, [showPopup]);
@@ -129,17 +123,23 @@ const PitchResolutionTest: React.FC = () => {
   // play new question when there is a new question
   useEffect(() => {
     if (newQuestion) {
-      setQuestion();
-      setNewQuestion(false);
+      const makeNew = async () => {
+        setQuestion();
+        await new Promise(resolve => setTimeout(resolve, 50));
+        playNotes();
+        setNewQuestion(false);
+      };
+      makeNew();
     }
   }, [newQuestion]);
 
+
   // play notes whenever note1 or note2 changes (but not on initial mount)
-  useEffect(() => {
-    if (note1 !== 0 && note2 !== 0 && !showPopup && numberOfAttemptsLeft > 0) {
-      playNotes();
-    }
-  }, [note1, note2]);
+  // useEffect(() => {
+  //   if (note1 !== 0 && note2 !== 0 && !showPopup && numberOfAttemptsLeft > 0) {
+  //     playNotes();
+  //   }
+  // }, [note1, note2]);
 
   const handleRepeat = () => {
     playNotes();
@@ -153,20 +153,19 @@ const PitchResolutionTest: React.FC = () => {
 
     const isCorrect = (buttonClicked + 1) === higherNoteButton;
 
+    const CORRECT_SHIFT = -1;
+    const INCORRECT_SHIFT = 3;
+
     if (isCorrect) {
       correct(buttonClicked);
-      if ((minGap - 1) > 0) {
-        setMinGap(minGap - 1);
+      if ((pitchIndex + CORRECT_SHIFT) > 0) {
+        setPitchIndex(pitchIndex - 1);
       }
     } else {
       incorrect(buttonClicked);
-      if ((minGap + 3) < DEFAULT_GAP) {
-        setMinGap(minGap + 3);
-      } else {
-        setMinGap(DEFAULT_GAP);
-      }
+      setPitchIndex(Math.min(pitchIndex + INCORRECT_SHIFT, DEFAULT_INDEX));
       if (firstWrongAnswerGap === null) {
-        setFirstWrongAnswerGap(currentGap);
+        setFirstWrongAnswerGap(currentSemitoneGap);
       }
       setWrongAnswers(prev => [...prev, questionNumber]);
     }
@@ -294,7 +293,7 @@ const PitchResolutionTest: React.FC = () => {
         ))}
       </div>
       <div className="pitch-info">
-        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones
+        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex})
       </div>
     </div>
   );
