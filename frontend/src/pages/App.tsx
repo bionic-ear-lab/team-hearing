@@ -40,7 +40,6 @@ function App() {
   );
 }
 
-// Create a separate component for conditional navbar
 const ConditionalNavbar: React.FC = () => {
   const location = useLocation();
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
