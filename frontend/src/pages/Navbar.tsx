@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ showAuthButtons = true }) => {
         <div className="navbar-right">
           {showAuthButtons && user && (
             <>
-              <a href="/profile" className="nav-link">Profile</a>
+              <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
               <span className="nav-link" onClick={handleLogout}>Logout</span>
             </>
           )}
