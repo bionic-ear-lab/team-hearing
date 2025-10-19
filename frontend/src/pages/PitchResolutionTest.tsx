@@ -31,6 +31,13 @@ const PitchResolutionTest: React.FC = () => {
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
   const [firstWrongAnswerGap, setFirstWrongAnswerGap] = useState<number | null>(null);
   const [questionNumber, setQuestionNumber] = useState(1);
+  
+  // Add new state to track answers for each question
+  const [questionResults, setQuestionResults] = useState<Array<{
+    questionNumber: number;
+    isCorrect: boolean;
+    semitoneGap: number;
+  }>>([]);
 
   const testName = location.state?.testName || "Pitch Resolution Test";
   const question = location.state?.question || "Which note is higher in pitch?";
@@ -156,6 +163,27 @@ const PitchResolutionTest: React.FC = () => {
     const CORRECT_SHIFT = -1;
     const INCORRECT_SHIFT = 3;
 
+    // Record the result for this question - use a callback to ensure proper state update
+    setQuestionResults(prev => {
+      // Check if this question number already exists to prevent duplicates
+      const existingIndex = prev.findIndex(result => result.questionNumber === questionNumber);
+      const newResult = {
+        questionNumber,
+        isCorrect,
+        semitoneGap: currentSemitoneGap
+      };
+      
+      if (existingIndex >= 0) {
+        // Replace existing entry
+        const updated = [...prev];
+        updated[existingIndex] = newResult;
+        return updated;
+      } else {
+        // Add new entry
+        return [...prev, newResult];
+      }
+    });
+
     if (isCorrect) {
       correct(buttonClicked);
       if ((pitchIndex + CORRECT_SHIFT) > 0) {
@@ -230,7 +258,19 @@ const PitchResolutionTest: React.FC = () => {
     }
 
     setIsSaving(false);
-    navigate(-1);
+    
+    // Navigate to results page with question results
+    navigate('/pitch-resolution-test-results', {
+      state: {
+        userId,
+        testName,
+        wrongAnswers,
+        gap,
+        totalQuestions: questionNumber - 1,
+        pitchDiscriminationThreshold: currentSemitoneGap,
+        questionResults // Add the detailed question results
+      }
+    });
   };
 
   const testOver = numberOfAttemptsLeft === 0;

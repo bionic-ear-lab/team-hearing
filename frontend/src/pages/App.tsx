@@ -10,6 +10,7 @@ import '../style/App.css';
 import ExerciseHomepage from './ExerciseHomepage';
 import TestTemplateTest from "./TestTemplateTest"; // Import your test page component
 import PitchResolutionTest from './PitchResolutionTest';
+import PitchResolutionTestResults from './PitchResolutionTestResults';
 import { AuthProvider } from '../context/AuthContext';
 import ProtectedRoute from "../routes/ProtectedRoute";
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/exercise/:exerciseName" element={<ProtectedRoute><ExerciseHomepage /></ProtectedRoute>} />
           <Route path="/test-template-test" element={<ProtectedRoute><TestTemplateTest /></ProtectedRoute>} /> {/* Add this line */}
           <Route path="/pitch-resolution-test" element={<ProtectedRoute><PitchResolutionTest /></ProtectedRoute>} />
+          <Route path="/pitch-resolution-test-results" element={<ProtectedRoute><PitchResolutionTestResults /></ProtectedRoute>} />
           {/*Add <ProtectedRoute> </ProtectedRoute> to make it so that not logged in users can't access the page pls*/}
           <Route path="/" element={
             <div style={{ marginTop: '84px', padding: '20px' }}>
