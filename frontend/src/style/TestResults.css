@@ -1,0 +1,62 @@
+.test-results-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.test-results-title {
+  margin-bottom: 20px;
+}
+
+.test-summary {
+  margin-bottom: 10px;
+}
+
+.test-summary strong {
+  font-weight: bold;
+}
+
+.graph-container {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.graph-title {
+  margin-bottom: 15px;
+}
+
+.graph-legend {
+  font-size: 12px;
+  color: #666;
+  margin-top: 10px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table-header {
+  background-color: #f5f5f5;
+}
+
+.table-cell {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.result-correct {
+  color: green;
+  font-weight: bold;
+}
+
+.result-incorrect {
+  color: red;
+  font-weight: bold;
+}
+
+.no-results {
+  text-align: center;
+}
