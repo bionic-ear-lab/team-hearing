@@ -13,6 +13,7 @@ import PitchResolutionTest from './PitchResolutionTest';
 import PitchResolutionTestResults from './PitchResolutionTestResults';
 import { AuthProvider } from '../context/AuthContext';
 import ProtectedRoute from "../routes/ProtectedRoute";
+import PitchResolutionResults from './PitchResolutionResults';
 
 
 function App() {
@@ -30,12 +31,9 @@ function App() {
           <Route path="/test-template-test" element={<ProtectedRoute><TestTemplateTest /></ProtectedRoute>} /> {/* Add this line */}
           <Route path="/pitch-resolution-test" element={<ProtectedRoute><PitchResolutionTest /></ProtectedRoute>} />
           <Route path="/pitch-resolution-test-results" element={<ProtectedRoute><PitchResolutionTestResults /></ProtectedRoute>} />
+          <Route path="/pitch-resolution-results" element={<ProtectedRoute><PitchResolutionResults /></ProtectedRoute>} />
           {/*Add <ProtectedRoute> </ProtectedRoute> to make it so that not logged in users can't access the page pls*/}
-          <Route path="/" element={
-            <div style={{ marginTop: '84px', padding: '20px' }}>
-              <h1>Hi! Team hearing development in progress....yooooo</h1>
-            </div>
-          } />
+          <Route path="*" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
