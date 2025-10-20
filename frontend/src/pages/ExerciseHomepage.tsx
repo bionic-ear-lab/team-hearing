@@ -25,6 +25,23 @@ const ExerciseHomepage: React.FC = () => {
     }
   };
 
+  const handleResultsClick = () => {
+    if (!user || !user.id) {
+      alert("User not logged in");
+      return;
+    }
+
+    const userId = user.id;
+    if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
+      // Navigate to test template results page (you'll need to create this)
+      navigate("/test-template-results", { state: { userId } });
+    } else if (exerciseName && decodeURIComponent(exerciseName) === "Pitch Resolution") {
+      navigate("/pitch-resolution-results", { state: { userId } });
+    } else {
+      alert("No results page configured for this exercise.");
+    }
+  };
+
   return (
     <div className="music-exercises-container">
       <div className="music-exercises-title-row">
@@ -43,7 +60,7 @@ const ExerciseHomepage: React.FC = () => {
       </div>
       <div className="options-buttons buttons-2">
         <button className="option-button" onClick={handleTestClick}>Test</button>
-        <button className="option-button">Results</button>
+        <button className="option-button" onClick={handleResultsClick}>Results</button>
       </div>
     </div>
   );
