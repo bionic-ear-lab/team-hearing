@@ -236,6 +236,8 @@ const PitchResolutionTest: React.FC = () => {
     setNumberOfAttemptsLeft((prev) => Math.max(prev - 1, 0));
   };
 
+  const NOTE_RANGE = 'A2'; // TODO: change to calculate actual note range, hardcoded for now
+
   const handleEndTest = async () => {
     setIsSaving(true);
 
@@ -248,6 +250,7 @@ const PitchResolutionTest: React.FC = () => {
           testType: testName,
           gap,
           wrongAnswers,
+          noteRange: NOTE_RANGE,
         });
         console.log('Test result saved successfully');
       } catch (error) {
@@ -268,7 +271,8 @@ const PitchResolutionTest: React.FC = () => {
         gap,
         totalQuestions: questionNumber - 1,
         pitchDiscriminationThreshold: currentSemitoneGap,
-        questionResults // Add the detailed question results
+        questionResults, // Add the detailed question results
+        noteRange: NOTE_RANGE
       }
     });
   };

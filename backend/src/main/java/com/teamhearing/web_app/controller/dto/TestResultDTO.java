@@ -19,15 +19,19 @@ public class TestResultDTO {
     
     @JsonProperty("wrongAnswers")
     private List<Integer> wrongAnswers;
+
+    @JsonProperty("note_range")
+    private String note_range;
     
     public TestResultDTO() {}
     
-    public TestResultDTO(Long userId, String testType, String subuser, Integer gap, List<Integer> wrongAnswers) {
+    public TestResultDTO(Long userId, String testType, String subuser, Integer gap, List<Integer> wrongAnswers, String note_range) {
         this.userId = userId;
         this.testType = testType;
         this.subuser = subuser;
         this.gap = gap;
         this.wrongAnswers = wrongAnswers;
+        this.note_range = note_range;
     }
     
     public Long getUserId() {
@@ -36,6 +40,14 @@ public class TestResultDTO {
     
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getNoteRange() {
+        return note_range;
+    }
+    
+    public void setNoteRange(String note_range) {
+        this.note_range = note_range;
     }
     
     public String getTestType() {
