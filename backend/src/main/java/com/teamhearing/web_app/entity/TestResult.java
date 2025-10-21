@@ -1,5 +1,7 @@
 package com.teamhearing.web_app.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -21,23 +23,55 @@ public class TestResult {
     
     @Column(columnDefinition = "JSON")
     private String wrongAnswers;
+
+    @Column(name = "time_logged")
+    private LocalDateTime timeLogged;
+
+    private String note_range;
     
     public TestResult() {}
     
-    public TestResult(String testType, Long userId, Integer gap, String wrongAnswers) {
+    public TestResult(String testType, Long userId, Integer gap, String wrongAnswers, String note_range) {
         this.testType = testType;
         this.userId = userId;
         this.subuser = null;
         this.gap = gap;
         this.wrongAnswers = wrongAnswers;
+        this.timeLogged = LocalDateTime.now();
+        this.note_range = note_range;
     }
 
-    public TestResult(String testType, Long userId, String subuser, Integer gap, String wrongAnswers) {
+    public TestResult(String testType, Long userId, String subuser, Integer gap, String wrongAnswers, String note_range) {
         this.testType = testType;
         this.userId = userId;
         this.subuser = subuser;
         this.gap = gap;
         this.wrongAnswers = wrongAnswers;
+        this.timeLogged = LocalDateTime.now();
+        this.note_range = note_range;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (timeLogged == null) {
+            timeLogged = LocalDateTime.now();
+        }
+    }
+
+    public LocalDateTime getTimeLogged() {
+        return timeLogged;
+    }
+    
+    public void setTimeLogged(LocalDateTime timeLogged) {
+        this.timeLogged = timeLogged;
+    }
+
+    public String getNoteRange() {
+        return note_range;
+    }
+    
+    public void setNoteRange(String note_range) {
+        this.note_range = note_range;
     }
     
     public Long getId() {

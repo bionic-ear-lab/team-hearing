@@ -11,7 +11,7 @@ interface QuestionResult {
 
 const PitchResolutionTestResults: React.FC = () => {
   const location = useLocation();
-  const { wrongAnswers, totalQuestions, pitchDiscriminationThreshold, testName, questionResults } = location.state || {};
+  const { wrongAnswers, totalQuestions, pitchDiscriminationThreshold, testName, questionResults, noteRange } = location.state || {};
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -98,6 +98,7 @@ const PitchResolutionTestResults: React.FC = () => {
     <div className="test-results-container">
       <h1 className="test-results-title">Pitch Resolution Test Results</h1>
       <p className="test-summary"><strong>Test:</strong> {testName}</p>
+      <p className="test-summary"><strong>Note Range:</strong> {noteRange}</p>
       <p className="test-summary"><strong>Total Questions:</strong> {totalQuestions}</p>
       <p className="test-summary"><strong>Wrong Answers:</strong> {wrongAnswers?.length || 0}</p>
       <p className="test-summary"><strong>Final Pitch Discrimination Threshold:</strong> {pitchDiscriminationThreshold?.toFixed(2)} semitones</p>

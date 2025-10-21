@@ -4,6 +4,7 @@ interface TestResultPayload {
   subuser?: string;
   gap: number;
   wrongAnswers: number[];
+  noteRange?: string;
 }
 
 export const saveTestResult = async (testData: TestResultPayload) => {
