@@ -26,8 +26,8 @@ export async function playAudio(fileUrl: string): Promise<void> {
 // File naming follows MIDI notes (12-108)
 // All files are pitch shifted versions of the A2 piano note
 // A2 = 45 (Lowest A on a standard piano)
-export async function playPianoNote(noteShiftNumber: number): Promise<void> {
-  let file_name = "piano_45_";
+export async function playPianoNote(noteNumber: number, noteShiftNumber: number): Promise<void> {
+  let file_name = `piano_${noteNumber}_`;
   const absNoteShiftNumber = Math.abs(noteShiftNumber);
   if (noteShiftNumber < 0) {
     file_name += `${absNoteShiftNumber}_n`;
@@ -35,7 +35,7 @@ export async function playPianoNote(noteShiftNumber: number): Promise<void> {
   else {
     file_name += `${absNoteShiftNumber}`;
   }
-  const filePath = '/musescore/library/piano/pitchshifted/' + file_name + '.wav';
+  const filePath = '/musescore/library/piano/pitchshifted/' + file_name + '.mp4';
 
   try {
     const response = await fetch(filePath, { method: "HEAD" });

@@ -3,7 +3,11 @@ import '../style/Navbar.css';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  showAuthButtons?: boolean;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ showAuthButtons = true }) => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
 
@@ -16,7 +20,9 @@ const Navbar: React.FC = () => {
     <nav className="navbar">
       <div className="navbar-content">
         <div className="navbar-left">
-          <span className="nav-link" onClick={() => navigate('/homepage')}>Home</span>
+          {showAuthButtons && user && (
+            <span className="nav-link" onClick={() => navigate('/homepage')}>Home</span>
+          )}
         </div>
         <span
           className="navbar-title"
@@ -28,8 +34,12 @@ const Navbar: React.FC = () => {
           TeamHearing
         </span>
         <div className="navbar-right">
-          <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
-          <span className="nav-link" onClick={handleLogout}>Log Out</span>
+          {showAuthButtons && user && (
+            <>
+              <span className="nav-link" onClick={() => navigate('/profile')}>Profile</span>
+              <span className="nav-link" onClick={handleLogout}>Logout</span>
+            </>
+          )}
         </div>
       </div>
     </nav>

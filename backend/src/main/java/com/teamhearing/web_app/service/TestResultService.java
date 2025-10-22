@@ -26,7 +26,8 @@ public class TestResultService {
                 testResultDTO.getUserId(),
                 testResultDTO.getSubuser(),
                 testResultDTO.getGap(),
-                wrongAnswersJson
+                wrongAnswersJson,
+                testResultDTO.getNoteRange()
             );
             
             return testResultRepository.save(testResult);

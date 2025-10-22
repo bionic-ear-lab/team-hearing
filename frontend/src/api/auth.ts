@@ -1,6 +1,6 @@
 
 export interface AuthResponse {
-  id: number;  // ← CHANGED: was string, now number
+  id: number; 
   username: string;
   email: string;
   birthdate: string;

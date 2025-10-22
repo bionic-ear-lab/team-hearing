@@ -26,11 +26,18 @@ const PitchResolutionTest: React.FC = () => {
   const [note1, setNote1] = useState(0);
   const [note2, setNote2] = useState(0);
   const [higherNoteButton, setHigherNoteButton] = useState<1 | 2>(1);
-  const [currentGap, setCurrentGap] = useState(0);
+  const [currentSemitoneGap, setCurrentSemitoneGap] = useState(0.0);
 
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
   const [firstWrongAnswerGap, setFirstWrongAnswerGap] = useState<number | null>(null);
   const [questionNumber, setQuestionNumber] = useState(1);
+
+  // Add new state to track answers for each question
+  const [questionResults, setQuestionResults] = useState<Array<{
+    questionNumber: number;
+    isCorrect: boolean;
+    semitoneGap: number;
+  }>>([]);
 
   const testName = location.state?.testName || "Pitch Resolution Test";
   const question = location.state?.question || "Which note is higher in pitch?";
@@ -40,44 +47,55 @@ const PitchResolutionTest: React.FC = () => {
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
   );
 
-  // Use this to make the test adaptive
-  const DEFAULT_MIN_GAP = 30;
-  const [minGap, setMinGap] = useState(DEFAULT_MIN_GAP);
 
-  const randomInRange = (min: number, max: number) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
+  // CHOOSING NOTES
 
-  const createQuestion = (minGap: number) => {
-    const minNoteNumber = -37;
-    const maxNoteNumber = 37;
+  const BASE_NOTES = [45, 57, 69, 81, 93, 105]; // A2–A7
+  const [baseNote, setBaseNote] = useState(45); // default to A2
 
-    let n1 = randomInRange(minNoteNumber, maxNoteNumber);
-    let n2 = randomInRange(minNoteNumber, maxNoteNumber);
-    while (Math.abs(n2 - n1) < minGap) {
-      n2 = randomInRange(minNoteNumber, maxNoteNumber);
-    }
+  const DEFAULT_INDEX = 34; // 8 semitones
+  const [pitchIndex, setPitchIndex] = useState(DEFAULT_INDEX);
+
+  const randomDirection = () => (Math.random() < 0.5 ? 1 : -1);
+
+  function chooseRandomBase() {
+    return BASE_NOTES[Math.floor(Math.random() * BASE_NOTES.length)];
+  }
+
+  const createQuestion = (index: number) => {
+    const randomBase = chooseRandomBase();
+    setBaseNote(randomBase);
+
+    const direction = randomDirection();
+    const n1 = 0;
+    const n2 = direction * index;
 
     const button1GetsFirst = Math.random() < 0.5;
     const noteA = button1GetsFirst ? n1 : n2;
     const noteB = button1GetsFirst ? n2 : n1;
     const higherButton: 1 | 2 = noteA > noteB ? 1 : 2;
-    const gap = Math.abs(noteA - noteB);
+    const gap = index;
 
     return { noteA, noteB, higherButton, gap };
   };
 
   const setQuestion = () => {
-    const { noteA, noteB, higherButton, gap } = createQuestion(minGap);
+    const { noteA, noteB, higherButton, gap } = createQuestion(pitchIndex);
     setNote1(noteA);
     setNote2(noteB);
     setHigherNoteButton(higherButton);
-    setCurrentGap(gap);
+
+    const semitone_gap = Math.pow(2, -8 + (gap - 1) / 3);
+    setCurrentSemitoneGap(semitone_gap);
   };
 
+
+  // PLAYING NOTES
+
   const tryPlayNotes = async (n1: number, n2: number) => {
-    await playPianoNote(n1);
+    await playPianoNote(baseNote, n1);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    await playPianoNote(n2);
+    await playPianoNote(baseNote, n2);
   };
 
   const playNotes = async () => {
@@ -114,42 +132,85 @@ const PitchResolutionTest: React.FC = () => {
 
   // play first question when popup closes
   useEffect(() => {
-    if (!showPopup && note1 && note2) {
+    if (!showPopup && note1 !== null && note2 !== null) {
       playNotes();
     }
   }, [showPopup]);
 
   // play new question when there is a new question
   useEffect(() => {
-    if (newQuestion && note1 && note2) {
-      playNotes();
+    if (newQuestion) {
+      setQuestion();
+    }
+  }, [newQuestion]);
+
+  // ensure playback happens only after note state updates
+  const [playedThisQuestion, setPlayedThisQuestion] = useState(false);
+
+  useEffect(() => {
+    if (!showPopup && newQuestion && !playedThisQuestion && note1 !== null && note2 !== null) {
+      setPlayedThisQuestion(true);
+      playNotes().then(() => setPlayedThisQuestion(false));
       setNewQuestion(false);
     }
-  }, [newQuestion, note1, note2]);
+  }, [note1, note2]);
 
   const handleRepeat = () => {
     playNotes();
   };
+
+
+  // DEALING WITH USER CHOICE 
 
   const handleAnswer = async (buttonClicked: number) => {
     if (isPlaying || buttonStates[0] !== "normal" || buttonStates[1] !== "normal") return;
 
     const isCorrect = (buttonClicked + 1) === higherNoteButton;
 
+    const CORRECT_SHIFT = -1;
+    const INCORRECT_SHIFT = 3;
+
+    // Record the result for this question - use a callback to ensure proper state update
+    setQuestionResults(prev => {
+      // Check if this question number already exists to prevent duplicates
+      const existingIndex = prev.findIndex(result => result.questionNumber === questionNumber);
+      const newResult = {
+        questionNumber,
+        isCorrect,
+        semitoneGap: currentSemitoneGap
+      };
+
+      if (existingIndex >= 0) {
+        // Replace existing entry
+        const updated = [...prev];
+        updated[existingIndex] = newResult;
+        return updated;
+      } else {
+        // Add new entry
+        return [...prev, newResult];
+      }
+    });
+
     if (isCorrect) {
       correct(buttonClicked);
+      if ((pitchIndex + CORRECT_SHIFT) > 0) {
+        setPitchIndex(pitchIndex - 1);
+      }
     } else {
       incorrect(buttonClicked);
+      setPitchIndex(Math.min(pitchIndex + INCORRECT_SHIFT, DEFAULT_INDEX));
       if (firstWrongAnswerGap === null) {
-        setFirstWrongAnswerGap(currentGap);
+        setFirstWrongAnswerGap(currentSemitoneGap);
       }
       setWrongAnswers(prev => [...prev, questionNumber]);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setQuestion();
-    setNewQuestion(true);
-    setQuestionNumber(prev => prev + 1);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    if (numberOfAttemptsLeft > 0) {
+      setNewQuestion(true);
+      setQuestionNumber(prev => prev + 1);
+    }
   };
 
   const correct = (buttonIndex: number) => {
@@ -182,6 +243,8 @@ const PitchResolutionTest: React.FC = () => {
     setNumberOfAttemptsLeft((prev) => Math.max(prev - 1, 0));
   };
 
+  const NOTE_RANGE = 'A2'; // TODO: change to calculate actual note range, hardcoded for now
+
   const handleEndTest = async () => {
     setIsSaving(true);
 
@@ -194,6 +257,7 @@ const PitchResolutionTest: React.FC = () => {
           testType: testName,
           gap,
           wrongAnswers,
+          noteRange: NOTE_RANGE,
         });
         console.log('Test result saved successfully');
       } catch (error) {
@@ -204,10 +268,24 @@ const PitchResolutionTest: React.FC = () => {
     }
 
     setIsSaving(false);
-    navigate(-1);
+
+    // Navigate to results page with question results
+    navigate('/pitch-resolution-test-results', {
+      state: {
+        userId,
+        testName,
+        wrongAnswers,
+        gap,
+        totalQuestions: questionNumber - 1,
+        pitchDiscriminationThreshold: currentSemitoneGap,
+        questionResults, // Add the detailed question results
+        noteRange: NOTE_RANGE
+      }
+    });
   };
 
   const testOver = numberOfAttemptsLeft === 0;
+
 
   return (
     <div className="music-exercises-container">
@@ -226,7 +304,7 @@ const PitchResolutionTest: React.FC = () => {
           <div className="popup-content">
             <h3>Test Complete!</h3>
             <p>Wrong answers: {wrongAnswers.length}</p>
-            <p>First wrong answer gap: {firstWrongAnswerGap ?? 'No mistakes!'}</p>
+            <p>Pitch Discrimination Threshold: {currentSemitoneGap.toFixed(2)}</p>
             <button onClick={handleEndTest} disabled={isSaving}>
               {isSaving ? 'Saving...' : 'Finish'}
             </button>
@@ -264,6 +342,9 @@ const PitchResolutionTest: React.FC = () => {
         {hearts.map((heart, idx) => (
           <span key={idx}>{heart}</span>
         ))}
+      </div>
+      <div className="pitch-info">
+        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
       </div>
     </div>
   );
