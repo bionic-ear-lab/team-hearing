@@ -1,6 +1,6 @@
 import React from "react";
 
-interface MusicTestCoreProps {
+interface TestCoreProps {
   showPopup: boolean;
   testOver: boolean;
   isSaving: boolean;
@@ -25,7 +25,7 @@ interface MusicTestCoreProps {
   baseNote: number;
 }
 
-const MusicTestCore: React.FC<MusicTestCoreProps> = ({
+const TestCore: React.FC<TestCoreProps> = ({
   showPopup,
   testOver,
   isSaving,
@@ -103,4 +103,4 @@ const MusicTestCore: React.FC<MusicTestCoreProps> = ({
   </div>
 );
 
-export default MusicTestCore;
+export default TestCore;

@@ -1,8 +1,5 @@
 type QuestionResult = { questionNumber: number; isCorrect: boolean; semitoneGap: number };
 
-const CORRECT_SHIFT = -1;
-const INCORRECT_SHIFT = 3;
-
 const evaluateAnswer = (
   buttonClicked: number,
   higherNoteButton: number,
@@ -20,9 +17,15 @@ const evaluateAnswer = (
   return { isCorrect, updatedResults };
 };
 
-const updatePitchIndex = (isCorrect: boolean, pitchIndex: number, defaultIndex: number) => {
-  if (isCorrect) return Math.max(pitchIndex + CORRECT_SHIFT, 1);
-  return Math.min(pitchIndex + INCORRECT_SHIFT, defaultIndex);
+const updatePitchIndex = (
+  isCorrect: boolean,
+  pitchIndex: number,
+  defaultIndex: number,
+  correctShift: number,
+  incorrectShift: number
+) => {
+  if (isCorrect) return Math.max(pitchIndex + correctShift, 1);
+  return Math.min(pitchIndex + incorrectShift, defaultIndex);
 };
 
-export { evaluateAnswer, updatePitchIndex, CORRECT_SHIFT, INCORRECT_SHIFT };
+export { evaluateAnswer, updatePitchIndex };

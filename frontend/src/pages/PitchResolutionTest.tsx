@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../style/MusicExercises.css";
-import MusicTestCore from "./MusicTestCore";
+import TestCore from "./TestCore";
 import { playNotes } from "../api/notePlayback";
-import { createQuestion, getSemitoneGap, DEFAULT_INDEX } from "../api/noteSelection";
+import { createQuestion, getSemitoneGap } from "../api/noteSelection";
 import { evaluateAnswer, updatePitchIndex } from "../api/userChoice";
 import { saveTestResult } from "../api/testResults";
 
 const PitchResolutionTest: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const BASE_NOTES = [45, 57, 69, 81, 93, 105];
+  const DEFAULT_INDEX = 34;
+
+  const CORRECT_SHIFT = -1;
+  const INCORRECT_SHIFT = 3;
 
   const numberOfAttempts = 5;
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(5);
@@ -48,7 +54,7 @@ const PitchResolutionTest: React.FC = () => {
 
 
   const setQuestion = () => {
-    const { randomBase, noteA, noteB, higherButton, gap } = createQuestion(pitchIndex);
+    const { randomBase, noteA, noteB, higherButton, gap } = createQuestion(pitchIndex, BASE_NOTES);
     setBaseNote(randomBase);
     setNote1(noteA);
     setNote2(noteB);
@@ -95,10 +101,10 @@ const PitchResolutionTest: React.FC = () => {
     setQuestionResults(updatedResults);
     if (isCorrect) {
       correct(i);
-      setPitchIndex(updatePitchIndex(true, pitchIndex, DEFAULT_INDEX));
+      setPitchIndex(updatePitchIndex(true, pitchIndex, DEFAULT_INDEX, CORRECT_SHIFT, INCORRECT_SHIFT));
     } else {
       incorrect(i);
-      setPitchIndex(updatePitchIndex(false, pitchIndex, DEFAULT_INDEX));
+      setPitchIndex(updatePitchIndex(false, pitchIndex, DEFAULT_INDEX, CORRECT_SHIFT, INCORRECT_SHIFT));
       if (firstWrongAnswerGap === null) setFirstWrongAnswerGap(currentSemitoneGap);
       setWrongAnswers(p => [...p, questionNumber]);
     }
@@ -133,7 +139,7 @@ const PitchResolutionTest: React.FC = () => {
   };
 
   return (
-    <MusicTestCore
+    <TestCore
       showPopup={showPopup}
       testOver={testOver}
       isSaving={isSaving}

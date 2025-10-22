@@ -1,11 +1,7 @@
-const BASE_NOTES = [45, 57, 69, 81, 93, 105];
-const DEFAULT_INDEX = 34;
-
 const randomDirection = () => (Math.random() < 0.5 ? 1 : -1);
-const chooseRandomBase = () => BASE_NOTES[Math.floor(Math.random() * BASE_NOTES.length)];
 
-const createQuestion = (index: number) => {
-  const randomBase = chooseRandomBase();
+const createQuestion = (index: number, baseNotes: number[]) => {
+  const randomBase = baseNotes[Math.floor(Math.random() * baseNotes.length)];
   const direction = randomDirection();
 
   const n1 = 0;
@@ -22,4 +18,4 @@ const createQuestion = (index: number) => {
 
 const getSemitoneGap = (gap: number) => Math.pow(2, -8 + (gap - 1) / 3);
 
-export { BASE_NOTES, DEFAULT_INDEX, chooseRandomBase, createQuestion, getSemitoneGap };
+export { createQuestion, getSemitoneGap };
