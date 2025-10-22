@@ -31,7 +31,7 @@ const PitchResolutionTest: React.FC = () => {
   const [wrongAnswers, setWrongAnswers] = useState<number[]>([]);
   const [firstWrongAnswerGap, setFirstWrongAnswerGap] = useState<number | null>(null);
   const [questionNumber, setQuestionNumber] = useState(1);
-  
+
   // Add new state to track answers for each question
   const [questionResults, setQuestionResults] = useState<Array<{
     questionNumber: number;
@@ -130,23 +130,20 @@ const PitchResolutionTest: React.FC = () => {
   // play new question when there is a new question
   useEffect(() => {
     if (newQuestion) {
-      const makeNew = async () => {
-        setQuestion();
-        await new Promise(resolve => setTimeout(resolve, 50));
-        playNotes();
-        setNewQuestion(false);
-      };
-      makeNew();
+      setQuestion();
     }
   }, [newQuestion]);
 
+  // ensure playback happens only after note state updates
+  const [playedThisQuestion, setPlayedThisQuestion] = useState(false);
 
-  // play notes whenever note1 or note2 changes (but not on initial mount)
-  // useEffect(() => {
-  //   if (note1 !== 0 && note2 !== 0 && !showPopup && numberOfAttemptsLeft > 0) {
-  //     playNotes();
-  //   }
-  // }, [note1, note2]);
+  useEffect(() => {
+    if (!showPopup && newQuestion && !playedThisQuestion && note1 !== null && note2 !== null) {
+      setPlayedThisQuestion(true);
+      playNotes().then(() => setPlayedThisQuestion(false));
+      setNewQuestion(false);
+    }
+  }, [note1, note2]);
 
   const handleRepeat = () => {
     playNotes();
@@ -172,7 +169,7 @@ const PitchResolutionTest: React.FC = () => {
         isCorrect,
         semitoneGap: currentSemitoneGap
       };
-      
+
       if (existingIndex >= 0) {
         // Replace existing entry
         const updated = [...prev];
@@ -261,7 +258,7 @@ const PitchResolutionTest: React.FC = () => {
     }
 
     setIsSaving(false);
-    
+
     // Navigate to results page with question results
     navigate('/pitch-resolution-test-results', {
       state: {
