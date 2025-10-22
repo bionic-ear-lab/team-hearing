@@ -50,12 +50,22 @@ const PitchResolutionTest: React.FC = () => {
 
   // CHOOSING NOTES
 
+  const BASE_NOTES = [45, 57, 69, 81, 93, 105]; // A2–A7
+  const [baseNote, setBaseNote] = useState(45); // default to A2
+
   const DEFAULT_INDEX = 34; // 8 semitones
   const [pitchIndex, setPitchIndex] = useState(DEFAULT_INDEX);
 
   const randomDirection = () => (Math.random() < 0.5 ? 1 : -1);
 
+  function chooseRandomBase() {
+    return BASE_NOTES[Math.floor(Math.random() * BASE_NOTES.length)];
+  }
+
   const createQuestion = (index: number) => {
+    const randomBase = chooseRandomBase();
+    setBaseNote(randomBase);
+
     const direction = randomDirection();
     const n1 = 0;
     const n2 = direction * index;
@@ -83,9 +93,9 @@ const PitchResolutionTest: React.FC = () => {
   // PLAYING NOTES
 
   const tryPlayNotes = async (n1: number, n2: number) => {
-    await playPianoNote(n1);
+    await playPianoNote(baseNote, n1);
     await new Promise(resolve => setTimeout(resolve, 1000));
-    await playPianoNote(n2);
+    await playPianoNote(baseNote, n2);
   };
 
   const playNotes = async () => {
@@ -334,7 +344,7 @@ const PitchResolutionTest: React.FC = () => {
         ))}
       </div>
       <div className="pitch-info">
-        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex})
+        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
       </div>
     </div>
   );
