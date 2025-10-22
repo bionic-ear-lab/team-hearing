@@ -35,7 +35,7 @@ export async function playPianoNote(noteShiftNumber: number): Promise<void> {
   else {
     file_name += `${absNoteShiftNumber}`;
   }
-  const filePath = '/musescore/library/piano/pitchshifted/' + file_name + '.wav';
+  const filePath = '/musescore/library/piano/pitchshifted/' + file_name + '.mp4';
 
   try {
     const response = await fetch(filePath, { method: "HEAD" });
