@@ -11,7 +11,7 @@ const PitchResolutionTest: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const BASE_NOTES = [45, 57, 69, 81, 93, 105];
+  const BASE_NOTES = [45, 57, 69, 81, 93];
   const DEFAULT_INDEX = 34;
 
   const CORRECT_SHIFT = -1;
@@ -62,16 +62,36 @@ const PitchResolutionTest: React.FC = () => {
     setCurrentSemitoneGap(getSemitoneGap(gap));
   };
 
+  // Create first question on mount
   useEffect(() => {
     setQuestion();
   }, []);
 
+  // When newQuestion is triggered
   useEffect(() => {
     if (newQuestion) {
       setQuestion();
       setNewQuestion(false);
     }
   }, [newQuestion]);
+
+  // On start (when popup closes)
+  useEffect(() => {
+    if (!showPopup) {
+      setQuestion();
+    }
+  }, [showPopup]);
+
+  // When question changes, play automatically
+  useEffect(() => {
+    if (!showPopup && !isPlaying && note1 !== undefined && note2 !== undefined) {
+      (async () => {
+        setIsPlaying(true);
+        await playNotes(baseNote, note1, note2, setQuestion);
+        setIsPlaying(false);
+      })();
+    }
+  }, [note1, note2]);
 
   const handleRepeat = async () => {
     if (isPlaying) return;
