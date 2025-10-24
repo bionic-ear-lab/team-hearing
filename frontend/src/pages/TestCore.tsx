@@ -10,6 +10,7 @@ interface MusicTestConfig {
   correctShift: number;
   incorrectShift: number;
   numberOfAttempts: number;
+  buttonOptions: string[];
   questionGenerator: (pitchIndex: number, baseNotes: number[]) => any;
   getSemitoneGap: (gap: number) => number;
   evaluator: (
@@ -41,6 +42,7 @@ const TestCore: React.FC<Props> = ({
   correctShift,
   incorrectShift,
   numberOfAttempts,
+  buttonOptions,
   questionGenerator,
   getSemitoneGap,
   evaluator,
@@ -191,8 +193,6 @@ const TestCore: React.FC<Props> = ({
     if (onBack) onBack();
     else navigate(-1);
   };
-
-  const buttonOptions = ["1", "2"];
 
   return (
     <div className="music-exercises-container">
