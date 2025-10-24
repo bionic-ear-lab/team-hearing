@@ -13,6 +13,7 @@ const PitchResolutionTest: React.FC = () => (
     correctShift={-1}
     incorrectShift={3}
     numberOfAttempts={5}
+    buttonOptions={["1", "2"]}
     questionGenerator={createQuestion}
     getSemitoneGap={getSemitoneGap}
     evaluator={evaluateAnswer}
