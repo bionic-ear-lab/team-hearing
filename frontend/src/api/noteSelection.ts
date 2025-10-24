@@ -1,6 +1,7 @@
 const randomDirection = () => (Math.random() < 0.5 ? 1 : -1);
 
 const createQuestion = (index: number, baseNotes: number[]) => {
+  console.log("Creating question with index:", index);
   const randomBase = baseNotes[Math.floor(Math.random() * baseNotes.length)];
   const direction = randomDirection();
 
