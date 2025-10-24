@@ -14,6 +14,7 @@ const playNotes = async (baseNote: number, n1: number, n2: number, regenerateQue
   while (!success && attempts < MAX_AUDIO_RETRY_ATTEMPTS) {
     attempts++;
     try {
+      console.log(`Attempt ${attempts} to play notes`);
       await tryPlayNotes(baseNote, n1, n2);
       success = true;
     } catch {

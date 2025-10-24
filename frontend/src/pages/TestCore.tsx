@@ -29,24 +29,27 @@ interface MusicTestConfig {
   player: (baseNote: number, n1: number, n2: number, regenerate: () => void) => Promise<void>;
 }
 
-export const useMusicTest = (config: MusicTestConfig) => {
+interface Props extends MusicTestConfig {
+  onBack?: () => void;
+}
+
+const TestCore: React.FC<Props> = ({
+  testName,
+  question,
+  baseNotes,
+  defaultIndex,
+  correctShift,
+  incorrectShift,
+  numberOfAttempts,
+  questionGenerator,
+  getSemitoneGap,
+  evaluator,
+  indexUpdater,
+  player,
+  onBack,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const {
-    testName,
-    question,
-    baseNotes,
-    defaultIndex,
-    correctShift,
-    incorrectShift,
-    numberOfAttempts,
-    questionGenerator,
-    getSemitoneGap,
-    evaluator,
-    indexUpdater,
-    player,
-  } = config;
 
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(numberOfAttempts);
   const [showPopup, setShowPopup] = useState(true);
@@ -81,6 +84,7 @@ export const useMusicTest = (config: MusicTestConfig) => {
     setNote2(noteB);
     setHigherButton(higherButton);
     setCurrentSemitoneGap(getSemitoneGap(gap));
+    console.log("New question generated:", { randomBase, noteA, noteB, higherButton, gap })
   };
 
   // Create first question on mount
@@ -88,7 +92,7 @@ export const useMusicTest = (config: MusicTestConfig) => {
     setQuestion();
   }, []);
 
-  // When new question
+  // Create new question when flagged
   useEffect(() => {
     if (newQuestion) {
       setQuestion();
@@ -96,16 +100,9 @@ export const useMusicTest = (config: MusicTestConfig) => {
     }
   }, [newQuestion]);
 
-  // On start(when popup closes)
-  useEffect(() => {
-    if (!showPopup) {
-      setQuestion();
-    }
-  }, [showPopup]);
-
   // When question changes, play automatically
   useEffect(() => {
-    if (!showPopup && !isPlaying && note1 && note2) {
+    if (!showPopup && !isPlaying && note1 != null && note2 != null) {
       (async () => {
         setIsPlaying(true);
         await player(baseNote, note1, note2, setQuestion);
@@ -121,14 +118,14 @@ export const useMusicTest = (config: MusicTestConfig) => {
     setIsPlaying(false);
   };
 
-  const correct = (i: number) => {
+  const markCorrect = (i: number) => {
     const s = [...buttonStates];
     s[i] = "correct";
     setButtonStates(s);
     setTimeout(() => setButtonStates(["normal", "normal"]), 1000);
   };
 
-  const incorrect = (i: number) => {
+  const markIncorrect = (i: number) => {
     const s = [...buttonStates];
     s[i] = "incorrect";
     setButtonStates(s);
@@ -149,10 +146,10 @@ export const useMusicTest = (config: MusicTestConfig) => {
     setQuestionResults(updatedResults);
 
     if (isCorrect) {
-      correct(i);
+      markCorrect(i);
       setPitchIndex(indexUpdater(true, pitchIndex, defaultIndex, correctShift, incorrectShift));
     } else {
-      incorrect(i);
+      markIncorrect(i);
       setPitchIndex(indexUpdater(false, pitchIndex, defaultIndex, correctShift, incorrectShift));
       if (firstWrongGap === null) setFirstWrongGap(currentSemitoneGap);
       setWrongAnswers((p) => [...p, questionNumber]);
@@ -190,135 +187,76 @@ export const useMusicTest = (config: MusicTestConfig) => {
 
   const handleStart = () => setShowPopup(false);
 
-  return {
-    testProps: {
-      showPopup,
-      testOver,
-      isSaving,
-      isPlaying,
-      testName,
-      question,
-      wrongAnswers,
-      currentSemitoneGap,
-      numberOfAttemptsLeft,
-      numberOfAttempts,
-      buttonOptions: ["1", "2"],
-      buttonStates,
-      hearts,
-      note1,
-      note2,
-      pitchIndex,
-      baseNote,
-    },
-    handleAnswer,
-    handleRepeat,
-    handleEndTest,
-    handleStart,
-    handleBack: () => navigate(-1),
+  const goBack = () => {
+    if (onBack) onBack();
+    else navigate(-1);
   };
-};
 
+  const buttonOptions = ["1", "2"];
 
-interface TestCoreProps {
-  showPopup: boolean;
-  testOver: boolean;
-  isSaving: boolean;
-  isPlaying: boolean;
-  testName: string;
-  question: string;
-  wrongAnswers: number[];
-  currentSemitoneGap: number;
-  numberOfAttemptsLeft: number;
-  numberOfAttempts: number;
-  buttonOptions: string[];
-  buttonStates: ("normal" | "correct" | "incorrect")[];
-  onStart: () => void;
-  onRepeat: () => void;
-  onBack: () => void;
-  onFinish: () => void;
-  onAnswer: (i: number) => void;
-  hearts: string[];
-  note1: number;
-  note2: number;
-  pitchIndex: number;
-  baseNote: number;
-}
-
-const TestCore: React.FC<TestCoreProps> = ({
-  showPopup,
-  testOver,
-  isSaving,
-  isPlaying,
-  testName,
-  question,
-  wrongAnswers,
-  currentSemitoneGap,
-  numberOfAttempts,
-  buttonOptions,
-  buttonStates,
-  onStart,
-  onRepeat,
-  onBack,
-  onFinish,
-  onAnswer,
-  hearts,
-  note1,
-  note2,
-  pitchIndex,
-  baseNote,
-}) => (
-  <div className="music-exercises-container">
-    {showPopup && (
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <h3>{testName}</h3>
-          <p>{question}</p>
-          <button onClick={onStart}>Start</button>
+  return (
+    <div className="music-exercises-container">
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>{testName}</h3>
+            <p>{question}</p>
+            <button onClick={handleStart}>Start</button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {testOver && (
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <h3>Test Complete!</h3>
-          <p>Wrong answers: {wrongAnswers.length}</p>
-          <p>Pitch Discrimination Threshold: {currentSemitoneGap.toFixed(2)}</p>
-          <button onClick={onFinish} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Finish"}
-          </button>
+      {testOver && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Test Complete!</h3>
+            <p>Wrong answers: {wrongAnswers.length}</p>
+            <p>Pitch Discrimination Threshold: {currentSemitoneGap.toFixed(2)}</p>
+            <button onClick={handleEndTest} disabled={isSaving}>
+              {isSaving ? "Saving..." : "Finish"}
+            </button>
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
-    <div className="music-exercises-title-row">
-      <button className="arrow-button" aria-label="Back" onClick={onBack} disabled={testOver}>
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <h2 className="music-exercises-title" style={{ margin: 0 }}>{question}</h2>
-      <button className="repeat-button" onClick={onRepeat} disabled={isPlaying || testOver}>Repeat</button>
-    </div>
-
-    <div className={`options-buttons buttons-${buttonOptions.length}`}>
-      {buttonOptions.map((text, i) => (
-        <button key={i} className={`option-button ${buttonStates[i]}`} onClick={() => onAnswer(i)} disabled={testOver}>
-          {text}
+      <div className="music-exercises-title-row">
+        <button className="arrow-button" aria-label="Back" onClick={goBack} disabled={testOver}>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path
+              d="M18 7L11 14L18 21"
+              stroke="#222"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
-      ))}
-    </div>
+        <h2 className="music-exercises-title" style={{ margin: 0 }}>{question}</h2>
+        <button className="repeat-button" onClick={handleRepeat} disabled={isPlaying || testOver}>Repeat</button>
+      </div>
 
-    <div className="hearts-row">
-      {hearts.map((heart, idx) => (
-        <span key={idx}>{heart}</span>
-      ))}
-    </div>
+      <div className={`options-buttons buttons-${buttonOptions.length}`}>
+        {buttonOptions.map((text, i) => (
+          <button
+            key={i}
+            className={`option-button ${buttonStates[i]}`}
+            onClick={() => handleAnswer(i)}
+            disabled={testOver}
+          >
+            {text}
+          </button>
+        ))}
+      </div>
 
-    <div className="pitch-info">
-      Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
+      <div className="hearts-row">
+        {hearts.map((heart, idx) => <span key={idx}>{heart}</span>)}
+      </div>
+
+      <div className="pitch-info">
+        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default TestCore;
