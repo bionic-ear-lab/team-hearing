@@ -26,8 +26,7 @@ Follow these steps to get your development environment running. In this mode, th
     cd team-hearing
     ```
 
-2.  **Install dependencies:**  
-    This installs `concurrently`, which is used to run both servers with one command.
+2.  **Install node dependencies:**  
 
     ```bash
     npm install
