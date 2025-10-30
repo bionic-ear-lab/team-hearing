@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+}
+
+.note-selection-container {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 64px);
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 3rem;
+}
+
+.note-selection-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.note-selection-title {
+  margin: 0;
+  padding: 8px 0;
+  text-align: left;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #222;
+  flex: 1; 
+}
+
+.note-selection-container select {
+  width: 100px;
+  padding: 12px 16px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.note-selection-container select:hover {
+  border-color: #888;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.note-selection-container select:focus {
+  outline: none;
+  border-color: #68a5d0;
+  box-shadow: 0 0 0 3px rgba(104, 165, 208, 0.25);
+}
+
+.note-selection-container button {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.arrow-button {
+  background: #fff;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 8px;
+  padding: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.arrow-button:hover {
+  border-color: #888;
+  background: #f0f0f0;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.arrow-button:active {
+  border-color: #aaa;
+  background: #eaeaea;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
+}
+
+.start-button {
+  background: #68a5d0;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 40px;   
+  font-size: 5.0rem;    
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
