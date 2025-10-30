@@ -14,6 +14,7 @@ import PitchResolutionTestResults from './PitchResolutionTestResults';
 import { AuthProvider } from '../context/AuthContext';
 import ProtectedRoute from "../routes/ProtectedRoute";
 import PitchResolutionResults from './PitchResolutionResults';
+import BaseNoteSelection from './BaseNoteSelection';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/music-exercises" element={<ProtectedRoute><MusicExercises /></ProtectedRoute>} />
           <Route path="/exercise/:exerciseName" element={<ProtectedRoute><ExerciseHomepage /></ProtectedRoute>} />
           <Route path="/test-template-test" element={<ProtectedRoute><TestTemplateTest /></ProtectedRoute>} /> {/* Add this line */}
+          <Route path="/select-base-note" element={<ProtectedRoute><BaseNoteSelection /></ProtectedRoute>} />
           <Route path="/pitch-resolution-test" element={<ProtectedRoute><PitchResolutionTest /></ProtectedRoute>} />
           <Route path="/pitch-resolution-test-results" element={<ProtectedRoute><PitchResolutionTestResults /></ProtectedRoute>} />
           <Route path="/pitch-resolution-results" element={<ProtectedRoute><PitchResolutionResults /></ProtectedRoute>} />
