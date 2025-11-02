@@ -37,7 +37,6 @@ const PitchResolutionResults: React.FC = () => {
       try {
         const allTests = await getTestHistory(user.id);
         
-        // Filter for only Pitch Resolution tests
         const pitchResolutionTests = allTests.filter((test: TestResult) => 
           test.testType === 'Pitch Resolution Test'
         );
@@ -54,7 +53,6 @@ const PitchResolutionResults: React.FC = () => {
     fetchResults();
   }, [user]);
 
-  // Sort results whenever testResults or sortBy changes
   useEffect(() => {
     const sortResults = () => {
       const sorted = [...testResults].sort((a, b) => {
@@ -72,7 +70,6 @@ const PitchResolutionResults: React.FC = () => {
             const aIndex = a.noteRange ? noteOrder.indexOf(a.noteRange) : -1;
             const bIndex = b.noteRange ? noteOrder.indexOf(b.noteRange) : -1;
             
-            // Handle cases where noteRange might not be in the order array
             if (aIndex === -1 && bIndex === -1) return 0;
             if (aIndex === -1) return 1;
             if (bIndex === -1) return -1;
@@ -149,42 +146,62 @@ const PitchResolutionResults: React.FC = () => {
   };
 
   return (
-    <div className="music-exercises-container">
+    <div className="music-exercises-container" style={{ 
+      backgroundColor: '#f5f5f5',
+      color: '#222'
+    }}>
       <div className="music-exercises-title-row">
         <button
           className="arrow-button"
           aria-label="Back"
           onClick={() => navigate('/exercise/Pitch%20Resolution')}
+          style={{
+            backgroundColor: '#fff',
+            borderColor: '#ccc'
+          }}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <h2 className="music-exercises-title">
+        <h2 className="music-exercises-title" style={{ color: '#222' }}>
           Pitch Resolution Test Results
         </h2>
       </div>
 
-      <div style={{ padding: '20px', width: '100%' }}>
-        {loading && <p>Loading test results...</p>}
+      <div style={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        height: 'calc(100vh - 200px)',
+        width: '100%'
+      }}>
+        {loading && <p style={{ padding: '20px', color: '#222' }}>Loading test results...</p>}
         
-        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+        {error && <p style={{ color: 'red', padding: '20px' }}>Error: {error}</p>}
         
         {!loading && !error && testResults.length === 0 && (
-          <p>No Pitch Resolution test results found.</p>
+          <p style={{ padding: '20px', color: '#222' }}>No Pitch Resolution test results found.</p>
         )}
         
         {!loading && !error && testResults.length > 0 && (
-          <div>
+          <>
             <div style={{ 
               display: 'flex', 
               justifyContent: 'space-between', 
               alignItems: 'center', 
-              marginBottom: '20px' 
+              padding: '20px 20px 0 20px',
+              flexShrink: 0
             }}>
-              <h3>Your Test History:</h3>
+              <h3 style={{ color: '#222' }}>Your Test History:</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <label htmlFor="sort-select" style={{ fontSize: '14px', fontWeight: '500' }}>
+                <label 
+                  htmlFor="sort-select" 
+                  style={{ 
+                    fontSize: '14px', 
+                    fontWeight: '500',
+                    color: '#222'
+                  }}
+                >
                   Sort by:
                 </label>
                 <select
@@ -198,7 +215,8 @@ const PitchResolutionResults: React.FC = () => {
                     background: '#fff',
                     fontSize: '14px',
                     cursor: 'pointer',
-                    transition: 'border-color 0.2s'
+                    transition: 'border-color 0.2s',
+                    color: '#222'
                   }}
                   onFocus={(e) => e.target.style.borderColor = '#888'}
                   onBlur={(e) => e.target.style.borderColor = '#ccc'}
@@ -212,23 +230,31 @@ const PitchResolutionResults: React.FC = () => {
               </div>
             </div>
             
-            {sortedResults.map((result, index) => (
-              <div key={result.id} style={{ 
-                border: '1px solid #ccc', 
-                borderRadius: '8px', 
-                padding: '15px', 
-                marginBottom: '10px',
-                backgroundColor: '#fff'
-              }}>
-                <p><strong>Test #{index + 1}</strong></p>
-                <p><strong>Date:</strong> {formatDate(result.timeLogged)}</p>
-                <p><strong>Gap:</strong> {result.gap.toFixed(3)} semitones</p>
-                <p><strong>Wrong Answers:</strong> {getWrongAnswersCount(result.wrongAnswers)}</p>
-                <p><strong>Wrong Answer Questions:</strong> {formatWrongAnswers(result.wrongAnswers)}</p>
-                {result.noteRange && <p><strong>Note Range:</strong> {result.noteRange}</p>}
-              </div>
-            ))}
-          </div>
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '20px',
+              paddingTop: '10px'
+            }}>
+              {sortedResults.map((result, index) => (
+                <div key={result.id} style={{ 
+                  border: '1px solid #ccc', 
+                  borderRadius: '8px', 
+                  padding: '15px', 
+                  marginBottom: '10px',
+                  backgroundColor: '#fff',
+                  color: '#222'
+                }}>
+                  <p style={{ color: '#222' }}><strong>Test #{index + 1}</strong></p>
+                  <p style={{ color: '#222' }}><strong>Date:</strong> {formatDate(result.timeLogged)}</p>
+                  <p style={{ color: '#222' }}><strong>Gap:</strong> {result.gap.toFixed(3)} semitones</p>
+                  <p style={{ color: '#222' }}><strong>Wrong Answers:</strong> {getWrongAnswersCount(result.wrongAnswers)}</p>
+                  <p style={{ color: '#222' }}><strong>Wrong Answer Questions:</strong> {formatWrongAnswers(result.wrongAnswers)}</p>
+                  {result.noteRange && <p style={{ color: '#222' }}><strong>Note Range:</strong> {result.noteRange}</p>}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>
