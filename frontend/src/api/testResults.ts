@@ -8,7 +8,7 @@ interface TestResultPayload {
 }
 
 export const saveTestResult = async (testData: TestResultPayload) => {
-  console.log("saveTestResult start");
+  console.log("saveTestResult start", testData);
   try {
     const response = await fetch(`http://localhost:8080/api/tests/save`, {
       method: 'POST',

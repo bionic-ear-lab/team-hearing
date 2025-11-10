@@ -177,7 +177,7 @@ const TestCore: React.FC<Props> = ({
 
   const handleEndTest = async () => {
     setIsSaving(true);
-    const gap = firstWrongGap ?? 0;
+    const gap = Number((currentSemitoneGap ?? 0).toFixed(2));
     if (userId) {
       try {
         await saveTestResult({ userId, testType: testName, gap, wrongAnswers, noteRange: NOTE_RANGE });
