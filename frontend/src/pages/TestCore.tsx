@@ -168,8 +168,10 @@ const TestCore: React.FC<Props> = ({
       setWrongAnswers((p) => [...p, questionNumber]);
     }
 
+    const nextAttempts = isCorrect ? numberOfAttemptsLeft : Math.max(numberOfAttemptsLeft - 1, 0);
+
     await new Promise((r) => setTimeout(r, 1500));
-    if (numberOfAttemptsLeft > 0) {
+    if (nextAttempts > 0) {
       setNewQuestion(true);
       setQuestionNumber((p) => p + 1);
     }
