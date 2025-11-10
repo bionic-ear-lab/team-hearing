@@ -19,7 +19,7 @@ const ExerciseHomepage: React.FC = () => {
     if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
       navigate("/test-template-test", { state: { userId } });
     } else if (exerciseName && decodeURIComponent(exerciseName) === "Pitch Resolution") {
-      navigate("/pitch-resolution-test", { state: { userId } });
+      navigate("/select-base-note", { state: { userId, nextTest: "/pitch-resolution-test" } });
     } else {
       alert("No test page configured for this exercise.");
     }
