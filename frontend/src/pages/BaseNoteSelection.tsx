@@ -35,7 +35,7 @@ const BaseNoteSelection: React.FC = () => {
           onClick={() => navigate(-1)}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
         <h2 className="note-selection-title">Which note would you like to base the test around?</h2>
@@ -50,7 +50,7 @@ const BaseNoteSelection: React.FC = () => {
           </option>
         ))}
       </select>
-    <button className="start-button" onClick={handleStartTest}>Start Test</button>
+      <button className="start-button" onClick={handleStartTest}>Start Test</button>
     </div>
   );
 };
