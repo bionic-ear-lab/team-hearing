@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { saveTestResult } from "../api/testResults";
+import { AuthContext } from "../context/AuthContext";
 
 interface MusicTestConfig {
   testName: string;
@@ -55,7 +56,7 @@ const TestCore: React.FC<Props> = ({
 
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(numberOfAttempts);
   const [showPopup, setShowPopup] = useState(true);
-  const [buttonStates, setButtonStates] = useState<("normal" | "correct" | "incorrect")[]>(["normal", "normal"]);
+  const [buttonStates, setButtonStates] = useState<("normal" | "correct" | "incorrect")[]>(Array(buttonOptions.length).fill("normal"));
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -71,8 +72,18 @@ const TestCore: React.FC<Props> = ({
   const [questionResults, setQuestionResults] = useState<any[]>([]);
   const [newQuestion, setNewQuestion] = useState(false);
 
-  const userId = location.state?.userId;
-  const NOTE_RANGE = "A2";
+  const { user } = useContext(AuthContext);
+  const userId = user?.id;
+  console.log("User id: ", userId);
+
+  // Utility to convert MIDI note number to note name (e.g., 45 -> "A2")  
+  function midiToNoteName(midi: number): string {
+    const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const octave = Math.floor(midi / 12) - 1;
+    const note = noteNames[midi % 12];
+    return `${note}${octave}`;
+  }
+  const NOTE_RANGE = midiToNoteName(baseNote);
 
   const hearts = Array.from({ length: numberOfAttempts }, (_, i) =>
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
@@ -124,14 +135,14 @@ const TestCore: React.FC<Props> = ({
     const s = [...buttonStates];
     s[i] = "correct";
     setButtonStates(s);
-    setTimeout(() => setButtonStates(["normal", "normal"]), 1000);
+    setTimeout(() => setButtonStates(Array(buttonOptions.length).fill("normal")), 1000);
   };
 
   const markIncorrect = (i: number) => {
     const s = [...buttonStates];
     s[i] = "incorrect";
     setButtonStates(s);
-    setTimeout(() => setButtonStates(["normal", "normal"]), 1000);
+    setTimeout(() => setButtonStates(Array(buttonOptions.length).fill("normal")), 1000);
     setNumberOfAttemptsLeft((p) => Math.max(p - 1, 0));
   };
 
