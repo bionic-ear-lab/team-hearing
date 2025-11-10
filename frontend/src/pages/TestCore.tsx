@@ -52,7 +52,6 @@ const TestCore: React.FC<Props> = ({
   onBack,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(numberOfAttempts);
   const [showPopup, setShowPopup] = useState(true);
@@ -115,14 +114,15 @@ const TestCore: React.FC<Props> = ({
 
   // When question changes, play automatically
   useEffect(() => {
-    if (!showPopup && !isPlaying && note1 != null && note2 != null) {
+    if (
+      !showPopup && !isPlaying && note1 !== null && note1 !== undefined && note2 !== null && note2 !== undefined) {
       (async () => {
         setIsPlaying(true);
         await player(baseNote, note1, note2, setQuestion);
         setIsPlaying(false);
       })();
     }
-  }, [note1, note2, showPopup]);
+  }, [note1, note2, showPopup, isPlaying, baseNote, player, setQuestion]);
 
   const handleRepeat = async () => {
     if (isPlaying) return;
