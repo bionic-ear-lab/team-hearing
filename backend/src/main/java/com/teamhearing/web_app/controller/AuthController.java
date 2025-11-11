@@ -2,6 +2,7 @@ package com.teamhearing.web_app.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.teamhearing.web_app.entity.User;
 import com.teamhearing.web_app.service.UserService;
 
@@ -63,6 +65,7 @@ public class AuthController {
     response.put("email", user.getEmail());
     response.put("birthdate", user.getBirthdate());
     response.put("gender", user.getGender());
+    response.put("volume", user.getVolume() != null ? user.getVolume() : 1.0);
     return response;
   }
 }

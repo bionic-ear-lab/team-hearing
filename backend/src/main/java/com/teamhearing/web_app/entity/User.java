@@ -27,6 +27,7 @@ public class User {
     private LocalDate birthdate;
     private String gender;
     private String role = "Client";
+    private Double volume = 1.0;
 
     public Long getId() {
         return id;
@@ -71,5 +72,13 @@ public class User {
     }
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    public Double getVolume() {
+        return volume;
+    }
+    
+    public void setVolume(Double volume) {
+        this.volume = volume;
     }
 }

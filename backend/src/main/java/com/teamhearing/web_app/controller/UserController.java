@@ -74,6 +74,7 @@ public class UserController {
             response.put("email", user.getEmail() != null ? user.getEmail() : "");
             response.put("birthdate", user.getBirthdate() != null ? user.getBirthdate().toString() : "");
             response.put("gender", user.getGender() != null ? user.getGender() : "");
+            response.put("volume", user.getVolume() != null ? user.getVolume() : 1.0);
             
             return ResponseEntity.ok(response);
         } catch (NumberFormatException e) {
@@ -147,6 +148,20 @@ public class UserController {
                 String gender = req.get("gender").toString();
                 System.out.println("Updating gender to: " + gender);
                 user.setGender(gender);
+            }
+            
+            if (req.containsKey("volume")) {
+                Object volumeObj = req.get("volume");
+                Double volume = null;
+                if (volumeObj instanceof Number) {
+                    volume = ((Number) volumeObj).doubleValue();
+                } else if (volumeObj instanceof String) {
+                    volume = Double.parseDouble((String) volumeObj);
+                }
+                if (volume != null && volume >= 0.0 && volume <= 1.0) {
+                    System.out.println("Updating volume to: " + volume);
+                    user.setVolume(volume);
+                }
             }
             
             System.out.println("Saving user...");

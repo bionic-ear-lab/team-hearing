@@ -5,6 +5,7 @@ export interface AuthResponse {
   email: string;
   birthdate: string;
   gender: string;
+  volume?: number;
 }
 
 export async function login(username: string, password: string): Promise<AuthResponse> {
