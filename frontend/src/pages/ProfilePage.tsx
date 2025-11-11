@@ -1,8 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../style/ProfilePage.css";
+import { AuthContext } from "../context/AuthContext";
 
 export default function ProfilePage() {
+  const { user, setUser } = useContext(AuthContext);
   const [profile, setProfile] = useState({
     id: 0,  
     name: "",
@@ -10,6 +12,7 @@ export default function ProfilePage() {
     email: "",
     birthdate: "",
     gender: "",
+    volume: 1.0,
   });
 
   const [saveStatus, setSaveStatus] = useState("");
@@ -59,7 +62,11 @@ export default function ProfilePage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+    if (name === "volume") {
+      setProfile((prev) => ({ ...prev, [name]: parseFloat(value) }));
+    } else {
+      setProfile((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -96,6 +103,10 @@ export default function ProfilePage() {
       if (response.ok) {
         setSaveStatus(result.message || "Profile updated successfully!");
         setIsEditingProfile(false);
+        // Update AuthContext with new volume
+        if (user && profile.volume !== undefined) {
+          setUser({ ...user, volume: profile.volume });
+        }
       } else {
         setSaveStatus(`Failed: ${result.error || "Unknown error"}`);
       }
@@ -206,6 +217,20 @@ export default function ProfilePage() {
                 <option value="Other">Other</option>
               </select>
             </div>
+            <div className="form-row">
+              <label htmlFor="volume">Volume: {Math.round((profile.volume || 1.0) * 100)}%</label>
+              <input
+                id="volume"
+                type="range"
+                name="volume"
+                min="0"
+                max="1"
+                step="0.01"
+                value={profile.volume || 1.0}
+                onChange={handleProfileChange}
+                style={{ width: '100%' }}
+              />
+            </div>
             <button
               className="save-btn"
               style={{
@@ -242,6 +267,7 @@ export default function ProfilePage() {
             <p><b>Email:</b> {profile.email || "Not set"}</p>
             <p><b>Birthdate:</b> {profile.birthdate || "Not set"}</p>
             <p><b>Gender:</b> {profile.gender || "Not set"}</p>
+            <p><b>Volume:</b> {Math.round((profile.volume || 1.0) * 100)}%</p>
           </div>
         )}
       </div>

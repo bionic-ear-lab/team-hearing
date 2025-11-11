@@ -1,7 +1,7 @@
 const audioContext = new window.AudioContext();
 
-export async function playAudio(fileUrl: string): Promise<void> {
-  console.log("Playing file:", fileUrl);
+export async function playAudio(fileUrl: string, volume: number = 1.0): Promise<void> {
+  console.log("Playing file:", fileUrl, "at volume:", volume);
 
   if (audioContext.state === 'suspended') {
     await audioContext.resume();
@@ -16,7 +16,14 @@ export async function playAudio(fileUrl: string): Promise<void> {
     const decodedBuffer = await audioContext.decodeAudioData(arrayBuffer);
     const source = audioContext.createBufferSource();
     source.buffer = decodedBuffer;
-    source.connect(audioContext.destination);
+    
+    // Create gain node to control volume
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = volume;
+    
+    // Connect: source -> gainNode -> destination
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
     source.start(0);
   } catch (error) {
     console.error(`Error playing audio from ${fileUrl}:`, error);
@@ -26,7 +33,7 @@ export async function playAudio(fileUrl: string): Promise<void> {
 // File naming follows MIDI notes (12-108)
 // All files are pitch shifted versions of the A2 piano note
 // A2 = 45 (Lowest A on a standard piano)
-export async function playPianoNote(noteNumber: number, noteShiftNumber: number): Promise<void> {
+export async function playPianoNote(noteNumber: number, noteShiftNumber: number, volume: number = 1.0): Promise<void> {
   let file_name = `piano_${noteNumber}_`;
   const absNoteShiftNumber = Math.abs(noteShiftNumber);
   if (noteShiftNumber < 0) {
@@ -48,5 +55,5 @@ export async function playPianoNote(noteNumber: number, noteShiftNumber: number)
     throw err; // signal back to the caller to regenerate question
   }
 
-  playAudio(filePath);
+  playAudio(filePath, volume);
 }

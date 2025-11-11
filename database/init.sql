@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash VARCHAR(255) NOT NULL,
   birthdate DATE,
   gender ENUM('Male','Female','Other'),
-  role ENUM('Client','Administrator') DEFAULT 'Client'
+  role ENUM('Client','Administrator') DEFAULT 'Client',
+  volume DOUBLE DEFAULT 1.0
 );
 
 CREATE TABLE IF NOT EXISTS devices (

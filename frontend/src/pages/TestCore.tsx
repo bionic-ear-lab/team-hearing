@@ -28,7 +28,7 @@ interface MusicTestConfig {
     correctShift: number,
     incorrectShift: number
   ) => number;
-  player: (baseNote: number, n1: number, n2: number, regenerate: () => void) => Promise<void>;
+  player: (baseNote: number, n1: number, n2: number, regenerate: () => void, volume?: number) => Promise<void>;
 }
 
 interface Props extends MusicTestConfig {
@@ -52,6 +52,9 @@ const TestCore: React.FC<Props> = ({
   onBack,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useContext(AuthContext);
+  const volume = user?.volume ?? 1.0;
 
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(numberOfAttempts);
   const [showPopup, setShowPopup] = useState(true);
@@ -71,7 +74,7 @@ const TestCore: React.FC<Props> = ({
   const [questionResults, setQuestionResults] = useState<any[]>([]);
   const [newQuestion, setNewQuestion] = useState(false);
 
-  const { user } = useContext(AuthContext);
+ // const { user } = useContext(AuthContext);
   const userId = user?.id;
   console.log("User id: ", userId);
 
@@ -118,16 +121,16 @@ const TestCore: React.FC<Props> = ({
       !showPopup && !isPlaying && note1 !== null && note1 !== undefined && note2 !== null && note2 !== undefined) {
       (async () => {
         setIsPlaying(true);
-        await player(baseNote, note1, note2, setQuestion);
+        await player(baseNote, note1, note2, setQuestion, volume);
         setIsPlaying(false);
       })();
     }
-  }, [note1, note2, showPopup, isPlaying, baseNote, player, setQuestion]);
+  }, [note1, note2, showPopup, baseNote, volume]);
 
   const handleRepeat = async () => {
     if (isPlaying) return;
     setIsPlaying(true);
-    await player(baseNote, note1, note2, setQuestion);
+    await player(baseNote, note1, note2, setQuestion, volume);
     setIsPlaying(false);
   };
 
