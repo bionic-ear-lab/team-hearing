@@ -260,88 +260,43 @@ const PitchResolutionResults: React.FC = () => {
   };
 
   return (
-    <div style={{ 
-      backgroundColor: '#f5f5f5',
-      color: '#222',
-      minHeight: '100vh',
-      position: 'fixed', 
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      paddingTop: '80px', 
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <div className="music-exercises-title-row" style={{
-        position: 'sticky',
-        top: 0,
-        backgroundColor: '#f5f5f5',
-        zIndex: 1000,
-        padding: '10px 20px 5px 20px'
-      }}>
+    <div className="pitch-results-container">
+      <div className="music-exercises-title-row pitch-results-title-row">
         <button
           className="arrow-button"
           aria-label="Back"
           onClick={() => navigate('/exercise/Pitch%20Resolution')}
-          style={{
-            backgroundColor: '#fff',
-            borderColor: '#ccc'
-          }}
         >
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
             <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <h2 className="music-exercises-title" style={{ 
-          color: '#222',
-          margin: '0', 
-          marginBottom: '0' 
-        }}>
+        <h2 className="music-exercises-title pitch-results-title">
           Pitch Resolution Test Results
         </h2>
       </div>
-      <div style={{
-        flex: 1,
-        overflowY: 'auto',
-        paddingBottom: '80px' 
-      }}>
-        {loading && <p style={{ padding: '20px', color: '#222' }}>Loading test results...</p>}
+      <div className="pitch-results-content-area">
+        {loading && <p className="pitch-results-loading">Loading test results...</p>}
         
-        {error && <p style={{ color: 'red', padding: '20px' }}>Error: {error}</p>}
+        {error && <p className="pitch-results-error">Error: {error}</p>}
         
         {!loading && !error && testResults.length === 0 && (
-          <p style={{ padding: '20px', color: '#222' }}>No Pitch Resolution test results found.</p>
+          <p className="pitch-results-no-data">No Pitch Resolution test results found.</p>
         )}
         
         {!loading && !error && testResults.length > 0 && (
           <>
-            <div style={{ 
-              padding: '20px',
-              backgroundColor: '#fff',
-              margin: '5px 20px 20px 20px', 
-              borderRadius: '8px',
-              border: '1px solid #ccc'
-            }}>
-              <h3 style={{ color: '#222', marginBottom: '20px' }}>Gap Threshold Over Time</h3>
-              <svg ref={svgRef} width={800} height={400} style={{ display: 'block', margin: '0 auto' }}></svg>
+            <div className="pitch-results-graph-box">
+              <h3 className="pitch-results-graph-title">Gap Threshold Over Time</h3>
+              <svg ref={svgRef} width={800} height={400} className="pitch-results-graph-svg"></svg>
             </div>
 
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
-              alignItems: 'center', 
-              padding: '0 20px 20px 20px'
-            }}>
-              <h3 style={{ color: '#222' }}>Your Test History:</h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div className="pitch-results-sort-container">
+              <h3 className="pitch-results-history-title">Your Test History:</h3>
+              <div className="pitch-results-sort-group">
                 <label 
                   htmlFor="sort-select" 
-                  style={{ 
-                    fontSize: '14px', 
-                    fontWeight: '500',
-                    color: '#222'
-                  }}
+                  className="pitch-results-sort-label"
                 >
                   Sort by:
                 </label>
@@ -349,18 +304,7 @@ const PitchResolutionResults: React.FC = () => {
                   id="sort-select"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  style={{
-                    padding: '8px 12px',
-                    border: '2px solid #ccc',
-                    borderRadius: '6px',
-                    background: '#fff',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s',
-                    color: '#222'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#888'}
-                  onBlur={(e) => e.target.style.borderColor = '#ccc'}
+                  className="pitch-results-sort-select"
                 >
                   <option value="date-newest">Date (Newest First)</option>
                   <option value="date-oldest">Date (Oldest First)</option>
@@ -371,21 +315,14 @@ const PitchResolutionResults: React.FC = () => {
               </div>
             </div>
             
-            <div style={{ padding: '0 20px 50px 20px' }}> 
+            <div className="pitch-results-list-container"> 
               {sortedResults.map((result, index) => (
-                <div key={result.id} style={{ 
-                  border: '1px solid #ccc', 
-                  borderRadius: '8px', 
-                  padding: '15px', 
-                  marginBottom: '10px',
-                  backgroundColor: '#fff',
-                  color: '#222'
-                }}>
-                  <p style={{ color: '#222' }}><strong>Date:</strong> {formatDate(result.timeLogged)}</p>
-                  <p style={{ color: '#222' }}><strong>Gap:</strong> {result.gap.toFixed(3)} semitones</p>
-                  <p style={{ color: '#222' }}><strong>Wrong Answers:</strong> {getWrongAnswersCount(result.wrongAnswers)}</p>
-                  <p style={{ color: '#222' }}><strong>Wrong Answer Questions:</strong> {formatWrongAnswers(result.wrongAnswers)}</p>
-                  {result.noteRange && <p style={{ color: '#222' }}><strong>Note Range:</strong> {result.noteRange}</p>}
+                <div key={result.id} className="pitch-results-item">
+                  <p className="pitch-results-item-text"><strong>Date:</strong> {formatDate(result.timeLogged)}</p>
+                  <p className="pitch-results-item-text"><strong>Gap:</strong> {result.gap.toFixed(3)} semitones</p>
+                  <p className="pitch-results-item-text"><strong>Wrong Answers:</strong> {getWrongAnswersCount(result.wrongAnswers)}</p>
+                  <p className="pitch-results-item-text"><strong>Wrong Answer Questions:</strong> {formatWrongAnswers(result.wrongAnswers)}</p>
+                  {result.noteRange && <p className="pitch-results-item-text"><strong>Note Range:</strong> {result.noteRange}</p>}
                 </div>
               ))}
             </div>
