@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import * as d3 from 'd3';
-import '../style/TestResults.css';
+import '../style/MusicExercises.css';
 
 interface QuestionResult {
   questionNumber: number;
@@ -11,18 +11,36 @@ interface QuestionResult {
 
 const PitchResolutionTestResults: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { wrongAnswers, totalQuestions, pitchDiscriminationThreshold, testName, questionResults, noteRange } = location.state || {};
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 800, height: 400 });
+
+  const updateDimensions = () => {
+    if (containerRef.current) {
+      const containerWidth = containerRef.current.offsetWidth - 40; 
+      const width = Math.min(containerWidth, 800); 
+      const height = Math.max(300, width * 0.5); 
+      setDimensions({ width, height });
+    }
+  };
 
   useEffect(() => {
-    if (!questionResults || questionResults.length === 0) return;
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  useEffect(() => {
+    if (!questionResults || questionResults.length === 0 || !svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove(); 
 
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = dimensions.width - margin.left - margin.right;
+    const height = dimensions.height - margin.top - margin.bottom;
 
     const g = svg.append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
@@ -67,11 +85,13 @@ const PitchResolutionTestResults: React.FC = () => {
       .attr("x", 0 - (height / 2))
       .attr("dy", "1em")
       .style("text-anchor", "middle")
+      .style("fill", "#222")
       .text("Semitone Difference");
 
     g.append("text")
       .attr("transform", `translate(${width / 2}, ${height + margin.bottom})`)
       .style("text-anchor", "middle")
+      .style("fill", "#222")
       .text("Trial Number");
 
     // Add the line
@@ -92,51 +112,111 @@ const PitchResolutionTestResults: React.FC = () => {
       .attr("r", 4)
       .attr("fill", (d: QuestionResult) => d.isCorrect ? "green" : "red");
 
-  }, [questionResults]);
+  }, [questionResults, dimensions]);
 
   return (
-    <div className="test-results-container">
-      <h1 className="test-results-title">Pitch Resolution Test Results</h1>
-      <p className="test-summary"><strong>Test:</strong> {testName}</p>
-      <p className="test-summary"><strong>Note Range:</strong> {noteRange}</p>
-      <p className="test-summary"><strong>Total Questions:</strong> {totalQuestions}</p>
-      <p className="test-summary"><strong>Wrong Answers:</strong> {wrongAnswers?.length || 0}</p>
-      <p className="test-summary"><strong>Final Pitch Discrimination Threshold:</strong> {pitchDiscriminationThreshold?.toFixed(2)} semitones</p>
-      
-      <div className="graph-container">
-        <h2 className="graph-title">Semitone Difference Over Time</h2>
-        <svg ref={svgRef} width={600} height={400}></svg>
-        <p className="graph-legend">
-          Green dots = Correct answers, Red dots = Incorrect answers
-        </p>
+    <div className="results-container">
+      {/* Header with back button, title, and retake button */}
+      <div className="music-exercises-title-row results-title-row">
+        <button
+          className="arrow-button"
+          aria-label="Back"
+          onClick={() => navigate('/exercise/Pitch%20Resolution')}
+        >
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <h2 className="music-exercises-title results-title">
+          {testName || 'Pitch Resolution Test'} Results
+        </h2>
+        <button
+          className="retake-button"
+          onClick={() => navigate('/pitch-resolution-test')}
+        >
+          Retake Test
+        </button>
       </div>
 
-      <table className="results-table">
-        <thead>
-          <tr className="table-header">
-            <th className="table-cell">Trial</th>
-            <th className="table-cell">Semitone Difference</th>
-            <th className="table-cell">Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questionResults?.map((result: QuestionResult, index: number) => (
-            <tr key={index}>
-              <td className="table-cell">{result.questionNumber}</td>
-              <td className="table-cell">{Number(result.semitoneGap).toFixed(3)}</td>
-              <td className={`table-cell ${result.isCorrect ? 'result-correct' : 'result-incorrect'}`}>
-                {result.isCorrect ? 'Correct' : 'Incorrect'}
-              </td>
-            </tr>
-          )) || (
-            <tr>
-              <td colSpan={3} className="table-cell no-results">
-                No question results available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      {/* Scrollable content area */}
+      <div className="results-content-area">
+        {/* Single white box containing all content */}
+        <div ref={containerRef} className="results-white-box">
+          {/* Graph section */}
+          <div className="results-graph-section">
+            <h3 className="results-graph-title">Semitone Difference Over Time</h3>
+            <div className="results-graph-container">
+              <svg 
+                ref={svgRef} 
+                width={dimensions.width} 
+                height={dimensions.height} 
+                className="results-graph-svg"
+              />
+            </div>
+            <p className="results-graph-legend">
+              Green dots = Correct answers, Red dots = Incorrect answers
+            </p>
+          </div>
+
+          {/* Test Summary section with box */}
+          <div className="results-summary-section">
+            <h3 className="results-summary-title">Test Summary</h3>
+            <p className="results-summary-text"><strong>Note Range:</strong> {noteRange || 'A2'}</p>
+            <p className="results-summary-text"><strong>Total Questions:</strong> {totalQuestions || 0}</p>
+            <p className="results-summary-text"><strong>Wrong Answers:</strong> {wrongAnswers?.length || 0}</p>
+            <p className="results-summary-text"><strong>Final Pitch Discrimination Threshold:</strong> {pitchDiscriminationThreshold?.toFixed(3) || '0.000'} semitones</p>
+          </div>
+
+          {/* Trial Details section */}
+          <div>
+            <h3 className="results-summary-title">Trial Details</h3>
+            <div className="results-table-container">
+              <table className="results-table">
+                <thead>
+                  <tr className="results-table-header">
+                    <th className="results-table-header-cell">Trial</th>
+                    <th className="results-table-header-cell">Semitone Difference</th>
+                    <th className="results-table-header-cell">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {questionResults?.map((result: QuestionResult, index: number) => (
+                    <tr key={index}>
+                      <td className="results-table-cell">{result.questionNumber}</td>
+                      <td className="results-table-cell">{Number(result.semitoneGap).toFixed(3)}</td>
+                      <td className={`results-table-cell ${result.isCorrect ? 'results-table-cell-correct' : 'results-table-cell-incorrect'}`}>
+                        {result.isCorrect ? 'Correct' : 'Incorrect'}
+                      </td>
+                    </tr>
+                  )) || (
+                    <tr>
+                      <td colSpan={3} className="results-table-cell results-table-cell-no-data">
+                        No question results available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Buttons below the white box */}
+        <div className="results-bottom-buttons">
+          <button
+            className="results-button"
+            onClick={() => navigate('/pitch-resolution-results')}
+          >
+            See All Results
+          </button>
+          <button
+            className="results-button"
+            onClick={() => navigate('/exercises')}
+          >
+            Home
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
