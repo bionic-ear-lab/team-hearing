@@ -27,7 +27,7 @@ export default function LoginPage() {
       console.log("Stored token:", localStorage.getItem('authToken')); 
 
       setUser(response);
-      alert("Login successful!");
+      //DEBUG: alert("Login successful!");
       navigate("/homepage");
     } catch (err) {
       console.error("Login error:", err);

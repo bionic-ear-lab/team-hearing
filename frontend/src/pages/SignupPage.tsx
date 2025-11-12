@@ -88,7 +88,7 @@ export default function SignupPage() {
       console.log("Stored token:", localStorage.getItem('authToken')); 
 
       setUser(response);
-      alert("Signup successful!");
+      //DEBUG: alert("Signup successful!");
       navigate("/homepage");
     } catch (err) {
       console.error("Signup error:", err);  
