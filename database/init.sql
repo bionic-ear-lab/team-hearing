@@ -13,10 +13,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS devices (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  device_id VARCHAR(100) NOT NULL,
-  user_id BIGINT,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  device_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  ear ENUM('Left', 'Right') NOT NULL,
+  device_type ENUM('Cochlear Implant', 'Hearing Aid', 'Other') NOT NULL,
+  manufacturer ENUM('Advanced Bionics', 'Cochlear', 'Med-El', 'Other') NOT NULL,
+  activation_date DATE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tests (

@@ -3,6 +3,14 @@ import React, { useState, useEffect, useContext } from "react";
 import "../style/ProfilePage.css";
 import { AuthContext } from "../context/AuthContext";
 
+interface Device {
+  id?: number;
+  ear: string;
+  deviceType: string;
+  manufacturer: string;
+  activationDate: string;
+}
+
 export default function ProfilePage() {
   const { user, setUser } = useContext(AuthContext);
   const [profile, setProfile] = useState({
@@ -16,10 +24,11 @@ export default function ProfilePage() {
   });
 
   const [saveStatus, setSaveStatus] = useState("");
-  const [devices, setDevices] = useState("N/A");
+  const [devices, setDevices] = useState<Device[]>([]);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingDevices, setIsEditingDevices] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [deviceSaveStatus, setDeviceSaveStatus] = useState("");
 
   // Fetch user profile from backend on mount
   useEffect(() => {
@@ -49,13 +58,29 @@ export default function ProfilePage() {
       .then((data) => {
         console.log("Profile data received:", data);
         setProfile(data);
-        setLoading(false);
+
+        // fetch devices
+        return fetch(`/api/devices/${data.id}`, {
+          headers: { 'Authorization': authToken }
+        });
       })
-      .catch((error) => {
-        console.error("Error fetching profile:", error);
-        setSaveStatus("Error loading profile. Please log in again.");
-        setLoading(false);
-      });
+      .then((res) => {
+      if (!res.ok) {
+        console.warn("Failed to fetch devices, setting empty array");
+        return [];
+      }
+      return res.json();
+    })
+    .then((deviceData) => {
+      console.log("Devices received:", deviceData);
+      setDevices(deviceData || []);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+      setSaveStatus("Error loading profile. Please log in again.");
+      setLoading(false);
+    });
   }, []);
 
   const handleProfileChange = (
@@ -113,6 +138,58 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error updating profile:", error);
       setSaveStatus("Error updating profile. Please try again.");
+    }
+  };
+
+  const handleAddDevice = () => {
+    setDevices([...devices, {
+      ear: "Left",
+      deviceType: "Cochlear Implant",
+      manufacturer: "Advanced Bionics",
+      activationDate: ""
+    }]);
+  };
+  
+  const handleDeviceChange = (index : number, field: keyof Device, value: string) => {
+    const updated = [...devices];
+    updated[index] = { ...updated[index], [field]: value };
+    setDevices(updated);
+  };
+
+  const handleRemoveDevice = (index: number) => {
+    setDevices(devices.filter((_, i) => i !== index));
+  };
+
+  const handleSaveDevices = async () => {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken || !profile.id) {
+      setDeviceSaveStatus("Please log in again");
+      return;
+    }
+    setDeviceSaveStatus("Saving...");
+
+    try {
+      const response = await fetch(`/api/devices/${profile.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": authToken
+        },
+        body: JSON.stringify(devices),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setDeviceSaveStatus("Devices saved successfully!");
+        setIsEditingDevices(false);
+        setDevices(result.devices);
+      } else {
+        setDeviceSaveStatus(`Failed: ${result.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error saving devices:", error);
+      setDeviceSaveStatus("Error saving devices. Please try again.");
     }
   };
 
@@ -285,16 +362,125 @@ export default function ProfilePage() {
         </div>
         {isEditingDevices ? (
           <div className="section-body">
-            <label><b>Devices:</b></label>
-            <textarea
-              value={devices}
-              onChange={(e) => setDevices(e.target.value)}
-              style={{ minHeight: '100px', width: '100%' }}
-            />
+            {devices.map((device, index) => (
+              <div key={index} style={{ 
+                marginBottom: '20px', 
+                padding: '15px', 
+                border: '1px solid #ddd', 
+                borderRadius: '8px',
+                backgroundColor: '#f9f9f9'
+              }}>
+                <div className="form-row">
+                  <label>Ear:</label>
+                  <select
+                    value={device.ear}
+                    onChange={(e) => handleDeviceChange(index, 'ear', e.target.value)}
+                  >
+                    <option value="Left">Left</option>
+                    <option value="Right">Right</option>
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Device Type:</label>
+                  <select
+                    value={device.deviceType}
+                    onChange={(e) => handleDeviceChange(index, 'deviceType', e.target.value)}
+                  >
+                    <option value="Cochlear Implant">Cochlear Implant</option>
+                    <option value="Hearing Aid">Hearing Aid</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Manufacturer:</label>
+                  <select
+                    value={device.manufacturer}
+                    onChange={(e) => handleDeviceChange(index, 'manufacturer', e.target.value)}
+                  >
+                    <option value="Advanced Bionics">Advanced Bionics</option>
+                    <option value="Cochlear">Cochlear</option>
+                    <option value="Med-El">Med-El</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Activation Date (optional):</label>
+                  <input
+                    type="date"
+                    value={device.activationDate}
+                    onChange={(e) => handleDeviceChange(index, 'activationDate', e.target.value)}
+                  />
+                </div>
+                <button
+                  onClick={() => handleRemoveDevice(index)}
+                  style={{
+                    marginTop: '10px',
+                    padding: '6px 12px',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Remove Device
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={handleAddDevice}
+              style={{
+                marginTop: '10px',
+                marginRight: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
+              + Add Device
+            </button>
+            <button
+              onClick={handleSaveDevices}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#68a5d0',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
+              Save Devices
+            </button>
+            {deviceSaveStatus && (
+              <div style={{
+                marginTop: '10px',
+                padding: '8px',
+                borderRadius: '4px',
+                backgroundColor: deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#d4edda' : '#f8d7da',
+                color: deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#155724' : '#721c24',
+                border: `1px solid ${deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#c3e6cb' : '#f5c6cb'}`
+              }}>
+                {deviceSaveStatus}
+              </div>
+            )}
           </div>
         ) : (
           <div className="section-body">
-            <p>{devices}</p>
+            {devices.length === 0 ? (
+              <p>No devices configured</p>
+            ) : (
+              devices.map((device, index) => (
+                <div key={index} style={{ marginBottom: '10px' }}>
+                  <p><b>{device.ear} Ear:</b> {device.deviceType} - {device.manufacturer}</p>
+                  {device.activationDate && <p><b>Activated:</b> {device.activationDate}</p>}
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

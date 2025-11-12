@@ -26,6 +26,7 @@ public class SecurityConfig {
         .requestMatchers("/api/tests/**").permitAll()  // Allow test API endpoints
         .requestMatchers("/api/users/me").permitAll() //to load details from db for user for profile
         .requestMatchers("/api/users/update").permitAll() // for updating database
+        .requestMatchers("/api/devices/**").permitAll()
         .requestMatchers("/error").permitAll()
         .anyRequest().authenticated()
       )
