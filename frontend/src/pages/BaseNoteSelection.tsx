@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import '../style/BaseNoteSelection.css';
 
 const NOTE_OPTIONS = [
@@ -10,12 +9,19 @@ const NOTE_OPTIONS = [
   { name: "A6", value: 93 },
 ];
 
-const BaseNoteSelection: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+interface BaseNoteSelectionProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onStartTest: (baseNote: number) => void;
+}
+
+const BaseNoteSelection: React.FC<BaseNoteSelectionProps> = ({ 
+  isOpen, 
+  onClose, 
+  onStartTest 
+}) => {
   const [selectedNote, setSelectedNote] = useState<number>(45); // default A2
 
-  const nextTest = location.state?.nextTest; // which test to go to after base note selection, should be set when you navigate to this page from exercises
   useEffect(() => {
     const saved = localStorage.getItem("baseNote");
     if (saved) setSelectedNote(Number(saved));
@@ -23,34 +29,51 @@ const BaseNoteSelection: React.FC = () => {
 
   const handleStartTest = () => {
     localStorage.setItem("baseNote", String(selectedNote));
-    navigate(nextTest, { state: { baseNote: selectedNote } });
+    onStartTest(selectedNote);
   };
 
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <div className="note-selection-container">
-      <div className="note-selection-title-row">
-        <button
-          className="arrow-button"
-          aria-label="Back"
-          onClick={() => navigate(-1)}
+    <div className="note-selection-overlay" onClick={handleOverlayClick}>
+      <div className="note-selection-popup">
+        <h2 className="note-selection-title">
+          Which note would you like to base the test around?
+        </h2>
+        
+        <select
+          className="note-selection-dropdown"
+          value={selectedNote}
+          onChange={(e) => setSelectedNote(Number(e.target.value))}
         >
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M18 7L11 14L18 21" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <h2 className="note-selection-title">Which note would you like to base the test around?</h2>
+          {NOTE_OPTIONS.map((note) => (
+            <option key={note.value} value={note.value}>
+              {note.name}
+            </option>
+          ))}
+        </select>
+        
+        <div className="note-selection-buttons">
+          <button 
+            className="note-selection-cancel-button" 
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button 
+            className="note-selection-start-button" 
+            onClick={handleStartTest}
+          >
+            Next
+          </button>
+        </div>
       </div>
-      <select
-        value={selectedNote}
-        onChange={(e) => setSelectedNote(Number(e.target.value))}
-      >
-        {NOTE_OPTIONS.map((note) => (
-          <option key={note.value} value={note.value}>
-            {note.name}
-          </option>
-        ))}
-      </select>
-      <button className="start-button" onClick={handleStartTest}>Start Test</button>
     </div>
   );
 };

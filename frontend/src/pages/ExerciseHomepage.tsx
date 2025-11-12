@@ -1,13 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"; 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import "../style/MusicExercises.css";
 import React from "react";
+import BaseNoteSelection from "./BaseNoteSelection";
 
 const ExerciseHomepage: React.FC = () => {
   const { exerciseName } = useParams<{ exerciseName: string }>();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const [showNoteSelection, setShowNoteSelection] = useState(false);
 
   const handleTestClick = () => {
     if (!user || !user.id) {
@@ -19,7 +21,8 @@ const ExerciseHomepage: React.FC = () => {
     if (exerciseName && decodeURIComponent(exerciseName) === "Test Template") {
       navigate("/test-template-test", { state: { userId } });
     } else if (exerciseName && decodeURIComponent(exerciseName) === "Pitch Resolution") {
-      navigate("/select-base-note", { state: { userId, nextTest: "/pitch-resolution-test" } });
+      // Show the note selection popup instead of navigating
+      setShowNoteSelection(true);
     } else {
       alert("No test page configured for this exercise.");
     }
@@ -42,6 +45,16 @@ const ExerciseHomepage: React.FC = () => {
     }
   };
 
+  const handleCloseNoteSelection = () => {
+    setShowNoteSelection(false);
+  };
+
+  const handleStartTest = (baseNote: number) => {
+    setShowNoteSelection(false);
+    const userId = user?.id;
+    navigate("/pitch-resolution-test", { state: { userId, baseNote } });
+  };
+
   return (
     <div className="music-exercises-container">
       <div className="music-exercises-title-row">
@@ -62,6 +75,12 @@ const ExerciseHomepage: React.FC = () => {
         <button className="option-button" onClick={handleTestClick}>Test</button>
         <button className="option-button" onClick={handleResultsClick}>Results</button>
       </div>
+
+      <BaseNoteSelection
+        isOpen={showNoteSelection}
+        onClose={handleCloseNoteSelection}
+        onStartTest={handleStartTest}
+      />
     </div>
   );
 };
