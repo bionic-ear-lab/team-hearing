@@ -30,6 +30,21 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [deviceSaveStatus, setDeviceSaveStatus] = useState("");
 
+  // helper function for status styling
+  const getStatusStyle = (status: string) => {
+    const isSuccess = status.includes('success') || status.includes('successfully');
+    const isLoading = status.includes('Saving');
+    
+    return {
+      marginTop: '10px',
+      padding: '8px',
+      borderRadius: '4px',
+      backgroundColor: isSuccess ? '#d4edda' : isLoading ? '#e2e3e5' : '#f8d7da',
+      color: isSuccess ? '#155724' : isLoading ? '#383d41' : '#721c24',
+      border: `1px solid ${isSuccess ? '#c3e6cb' : isLoading ? '#d6d8db' : '#f5c6cb'}`
+    };
+  };
+
   // Fetch user profile from backend on mount
   useEffect(() => {
     console.log("Fetching user profile...");
@@ -222,7 +237,10 @@ export default function ProfilePage() {
           <h3>Profile</h3>
           <button
             className="edit-btn"
-            onClick={() => setIsEditingProfile(!isEditingProfile)}
+            onClick={() => {
+              setIsEditingProfile(!isEditingProfile);
+              setSaveStatus("");
+            }}
           >
             ✏️
           </button>
@@ -324,14 +342,7 @@ export default function ProfilePage() {
               Save Changes
             </button>
             {saveStatus && (
-              <div style={{
-                marginTop: '10px',
-                padding: '8px',
-                borderRadius: '4px',
-                backgroundColor: saveStatus.includes('success') || saveStatus.includes('successfully') ? '#d4edda' : '#f8d7da',
-                color: saveStatus.includes('success') || saveStatus.includes('successfully') ? '#155724' : '#721c24',
-                border: `1px solid ${saveStatus.includes('success') || saveStatus.includes('successfully') ? '#c3e6cb' : '#f5c6cb'}`
-              }}>
+              <div style={getStatusStyle(saveStatus)}>
                 {saveStatus}
               </div>
             )}
@@ -355,7 +366,10 @@ export default function ProfilePage() {
           <h3>Devices</h3>
           <button
             className="edit-btn"
-            onClick={() => setIsEditingDevices(!isEditingDevices)}
+            onClick={() => {
+              setIsEditingDevices(!isEditingDevices);
+              setDeviceSaveStatus("");
+            }}
           >
             ✏️
           </button>
@@ -457,14 +471,7 @@ export default function ProfilePage() {
               Save Devices
             </button>
             {deviceSaveStatus && (
-              <div style={{
-                marginTop: '10px',
-                padding: '8px',
-                borderRadius: '4px',
-                backgroundColor: deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#d4edda' : '#f8d7da',
-                color: deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#155724' : '#721c24',
-                border: `1px solid ${deviceSaveStatus.includes('success') || deviceSaveStatus.includes('successfully') ? '#c3e6cb' : '#f5c6cb'}`
-              }}>
+              <div style={getStatusStyle(deviceSaveStatus)}>
                 {deviceSaveStatus}
               </div>
             )}
