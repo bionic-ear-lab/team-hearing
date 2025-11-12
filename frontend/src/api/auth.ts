@@ -14,10 +14,12 @@ export async function login(username: string, password: string): Promise<AuthRes
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password })
   });
+  
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Login failed");
+    const errorData = await res.json();
+    throw new Error(errorData.error || "Login failed");
   }
+  
   const data = await res.json();
   console.log("Login response:", data); 
   return data;
@@ -29,10 +31,12 @@ export async function signup(username: string, email: string, password: string, 
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, email, password, birthdate, gender })
   });
+  
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText || "Signup failed");
+    const errorData = await res.json();
+    throw new Error(errorData.error || "Signup failed");
   }
+  
   const data = await res.json();
   console.log("Signup response:", data);  
   return data;

@@ -51,6 +51,8 @@ const TestCore: React.FC<Props> = ({
   player,
   onBack,
 }) => {
+  const DEBUG = false; // toggle to true when debugging to see note information
+
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useContext(AuthContext);
@@ -269,7 +271,8 @@ const TestCore: React.FC<Props> = ({
       </div>
 
       <div className="pitch-info">
-        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
+        Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones
+        {DEBUG && <> (Note1: {note1}, Note2: {note2}, index {pitchIndex}, Base note: {baseNote})</>}
       </div>
     </div>
   );

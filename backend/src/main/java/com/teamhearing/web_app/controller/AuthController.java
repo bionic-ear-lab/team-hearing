@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,21 +25,30 @@ public class AuthController {
 
   @PostMapping("/signup")
   public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, String> body) {
-    System.out.println("Signup endpoint hit with data: " + body);
-    User user = userService.signup(
-        body.get("username"),
-        body.get("email"),
-        body.get("password"),
-        body.get("birthdate"),
-        body.get("gender"));
-    return ResponseEntity.ok(userToMap(user));
+    //DEBUG: System.out.println("Signup endpoint hit with data: " + body);
+    try {
+      User user = userService.signup(
+            body.get("username"),
+            body.get("email"),
+            body.get("password"),
+            body.get("birthdate"),
+            body.get("gender")
+          );
+      return ResponseEntity.ok(userToMap(user));
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+    }
   }
 
   @PostMapping("/login")
   public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-    System.out.println("Login endpoint hit with data: " + body);
-    User user = userService.login(body.get("username"), body.get("password"));
-    return ResponseEntity.ok(userToMap(user));
+    //DEBUG: System.out.println("Login endpoint hit with data: " + body);
+    try {
+      User user = userService.login(body.get("username"), body.get("password"));
+      return ResponseEntity.ok(userToMap(user));
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", e.getMessage()));
+    }
   }
 
   @PostMapping("/validate")
