@@ -37,7 +37,6 @@ Follow these steps to get your development environment running. In this mode, th
 
 4.  **Download piano files locally**  
     Expand *pitchshifted.zip* found in *frontend/public/musescore/libary/piano/pitchshifted*  
-    Note: This only contains the wav files for piano_45. As tests are expanded for more notes, they would have to be downloaded.
     All files available on [Dropbox](https://www.dropbox.com/scl/fo/1s7gxjlud0iohaco5ct7z/AOKAzUPmQX1NmmzKPM3jU7M?dl=0&rlkey=zm05o9qs7nm9cghlrg4ri8sv2).
 
 5.  **Run the application:**  
