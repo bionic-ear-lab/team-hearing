@@ -28,7 +28,7 @@ interface MusicTestConfig {
     correctShift: number,
     incorrectShift: number
   ) => number;
-  player: (baseNote: number, n1: number, n2: number, regenerate: () => void) => Promise<void>;
+  player: (baseNote: number, n1: number, n2: number, regenerate: () => void, volume?: number) => Promise<void>;
 }
 
 interface Props extends MusicTestConfig {
@@ -36,22 +36,30 @@ interface Props extends MusicTestConfig {
 }
 
 const TestCore: React.FC<Props> = ({
+  // Constants
   testName,
-  question,
-  baseNotes,
-  defaultIndex,
-  correctShift,
-  incorrectShift,
-  numberOfAttempts,
-  buttonOptions,
-  questionGenerator,
-  getSemitoneGap,
-  evaluator,
-  indexUpdater,
-  player,
-  onBack,
+  question,  // Instructional text displayed to user
+  baseNotes,  // Array of possible MIDI base notes used to generate question
+  defaultIndex,  // Starting pitch shift difference
+  correctShift,  // Change in pitch shift gap if answer is correct
+  incorrectShift,  // Change in pitch shift gap if answer is incorrect
+  numberOfAttempts,  // Number of wrong answers allowed
+  buttonOptions,  // Array of options (any size, values)
+  // Functions
+  questionGenerator,  // Chooses the notes played each time
+  getSemitoneGap,  // Calculates the semitone gap from pitch shift gap
+  evaluator,  // Evaluates whether the answer is correct
+  indexUpdater,  // Updates the pitch shift gap based on correctness of answer
+  player,  // Plays the notes
+  onBack,  // Optional 
 }) => {
+  const DEBUG = false; // toggle to true when debugging to see note information
+
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  const volume = user?.volume ?? 1.0;
+  const userId = user?.id;
+  console.log("User id: ", userId);
 
   const [numberOfAttemptsLeft, setNumberOfAttemptsLeft] = useState(numberOfAttempts);
   const [showPopup, setShowPopup] = useState(true);
@@ -71,10 +79,6 @@ const TestCore: React.FC<Props> = ({
   const [questionResults, setQuestionResults] = useState<any[]>([]);
   const [newQuestion, setNewQuestion] = useState(false);
 
-  const { user } = useContext(AuthContext);
-  const userId = user?.id;
-  console.log("User id: ", userId);
-
   // Utility to convert MIDI note number to note name (e.g., 45 -> "A2")  
   function midiToNoteName(midi: number): string {
     const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -84,6 +88,7 @@ const TestCore: React.FC<Props> = ({
   }
   const NOTE_RANGE = midiToNoteName(baseNote);
 
+  // Displays remaining attempts as heart emojis
   const hearts = Array.from({ length: numberOfAttempts }, (_, i) =>
     i < numberOfAttemptsLeft ? "❤️" : "🖤"
   );
@@ -118,16 +123,16 @@ const TestCore: React.FC<Props> = ({
       !showPopup && !isPlaying && note1 !== null && note1 !== undefined && note2 !== null && note2 !== undefined) {
       (async () => {
         setIsPlaying(true);
-        await player(baseNote, note1, note2, setQuestion);
+        await player(baseNote, note1, note2, setQuestion, volume);
         setIsPlaying(false);
       })();
     }
-  }, [note1, note2, showPopup, isPlaying, baseNote, player, setQuestion]);
+  }, [note1, note2, showPopup, baseNote, volume]);
 
   const handleRepeat = async () => {
     if (isPlaying) return;
     setIsPlaying(true);
-    await player(baseNote, note1, note2, setQuestion);
+    await player(baseNote, note1, note2, setQuestion, volume);
     setIsPlaying(false);
   };
 
@@ -266,7 +271,8 @@ const TestCore: React.FC<Props> = ({
       </div>
 
       <div className="pitch-info">
-        Note1 : {note1}, Note2 : {note2}, Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones (index {pitchIndex}), Base note: {baseNote}
+        Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones
+        {DEBUG && <> (Note1: {note1}, Note2: {note2}, index {pitchIndex}, Base note: {baseNote})</>}
       </div>
     </div>
   );

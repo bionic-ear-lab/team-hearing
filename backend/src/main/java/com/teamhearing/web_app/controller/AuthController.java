@@ -2,7 +2,9 @@ package com.teamhearing.web_app.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,59 +12,98 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.teamhearing.web_app.entity.User;
 import com.teamhearing.web_app.service.UserService;
+import com.teamhearing.web_app.util.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
-  @Autowired
-  private UserService userService;
 
-  @PostMapping("/signup")
-  public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, String> body) {
-    System.out.println("Signup endpoint hit with data: " + body);
-    User user = userService.signup(
-        body.get("username"),
-        body.get("email"),
-        body.get("password"),
-        body.get("birthdate"),
-        body.get("gender"));
-    return ResponseEntity.ok(userToMap(user));
-  }
+    @Autowired
+    private UserService userService;
 
-  @PostMapping("/login")
-  public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
-    System.out.println("Login endpoint hit with data: " + body);
-    User user = userService.login(body.get("username"), body.get("password"));
-    return ResponseEntity.ok(userToMap(user));
-  }
+    @Autowired
+    private JwtUtil jwtUtil;
 
-  @PostMapping("/validate")
-  public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
-    try {
-      if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-        return ResponseEntity.status(401).build();
-      }
-      String userId = authHeader.substring("Bearer ".length()).trim();
-      User user = userService.findById(Long.parseLong(userId));
-      if (user == null) {
-        return ResponseEntity.status(401).build();
-      }
-      return ResponseEntity.ok(userToMap(user));
-    } catch (Exception e) {
-      return ResponseEntity.status(401).build();
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, Object>> signup(@RequestBody Map<String, String> body) {
+        try {
+            User user = userService.signup(
+                body.get("username"),
+                body.get("email"),
+                body.get("password"),
+                body.get("birthdate"),
+                body.get("gender")
+            );
+            
+            // Generates JWT token
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            
+            Map<String, Object> response = userToMap(user);
+            response.put("token", token); 
+            
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", e.getMessage()));
+        }
     }
-  }
 
-  private Map<String, Object> userToMap(User user) {
-    Map<String, Object> response = new HashMap<>();
-    response.put("id", user.getId());
-    response.put("username", user.getUsername());
-    response.put("email", user.getEmail());
-    response.put("birthdate", user.getBirthdate());
-    response.put("gender", user.getGender());
-    return response;
-  }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> body) {
+        try {
+            User user = userService.login(body.get("username"), body.get("password"));
+            
+            String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+            
+            Map<String, Object> response = userToMap(user);
+            response.put("token", token); 
+            
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<Map<String, Object>> validateToken(
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).build();
+            }
+
+            String token = authHeader.substring("Bearer ".length()).trim();
+            
+            // Validate JWT token and extract user ID
+            Long userId = jwtUtil.getUserIdFromToken(token);
+            
+            User user = userService.findById(userId);
+            if (user == null) {
+                return ResponseEntity.status(401).build();
+            }
+
+            Map<String, Object> response = userToMap(user);
+            response.put("token", token);
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).build();
+        }
+    }
+
+    private Map<String, Object> userToMap(User user) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("birthdate", user.getBirthdate());
+        response.put("gender", user.getGender());
+        response.put("volume", user.getVolume() != null ? user.getVolume() : 1.0);
+        return response;
+    }
 }

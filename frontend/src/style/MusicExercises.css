@@ -192,13 +192,32 @@ body {
   cursor: pointer;
   margin-left: 16px;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 
 .repeat-button:hover {
   background: #4b7ca8;
 }
 
-/* Add to MusicExercises.css */
+.retake-button {
+  background: #68a5d0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;   
+  font-size: 1.8rem;   
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 16px;   
+  margin-right: 40px;   
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.retake-button:hover {
+  background: #4b7ca8;
+}
+
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -273,4 +292,293 @@ body {
   color: #fff !important;
   border-color: #b71c1c !important;
   transition: background 0.2s, border-color 0.2s;
+}
+
+.results-container {
+  background-color: #f5f5f5; 
+  color: #222;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 70px;
+  display: flex;
+  flex-direction: column;
+}
+
+.results-title-row {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 1000;
+  padding: 10px 20px 5px 20px;
+  margin-top: 0;
+  overflow: visible;
+}
+
+.results-title {
+  color: #222;
+  margin: 0;
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.results-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+
+.results-white-box {
+  padding: 20px;
+  background-color: #fff;
+  margin: 5px 20px 20px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.results-graph-section {
+  margin-bottom: 30px;
+}
+
+.results-graph-title {
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.results-graph-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.results-graph-svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.results-graph-legend {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.results-summary-section {
+  margin-bottom: 30px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.results-summary-title {
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.results-summary-text {
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.results-summary-text:last-child {
+  margin-bottom: 0;
+}
+
+.results-table-container {
+  overflow-x: auto;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.results-table-header {
+  background-color: #f8f9fa;
+}
+
+.results-table-header-cell {
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  text-align: left;
+  color: #222;
+}
+
+.results-table-cell {
+  padding: 12px;
+  border: 1px solid #dee2e6;
+  color: #222;
+}
+
+.results-table-cell-correct {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.results-table-cell-incorrect {
+  color: #dc3545;
+  font-weight: 500;
+}
+
+.results-table-cell-no-data {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.results-bottom-buttons {
+  display: flex;
+  gap: 16px;
+  margin: 0 20px 20px 20px;
+  justify-content: center;
+}
+
+.results-button {
+  background-color: #68a5d0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 32px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.results-button:hover {
+  background-color: #4b7ca8;
+}
+
+/* Pitch Resolution Results Page Styles */
+.pitch-results-container {
+  background-color: #f5f5f5;
+  color: #222;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.pitch-results-title-row {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 1000;
+  padding: 10px 20px 5px 20px;
+}
+
+.pitch-results-title {
+  color: #222;
+  margin: 0;
+  margin-bottom: 0;
+}
+
+.pitch-results-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 80px;
+}
+
+.pitch-results-loading {
+  padding: 20px;
+  color: #222;
+}
+
+.pitch-results-error {
+  color: red;
+  padding: 20px;
+}
+
+.pitch-results-no-data {
+  padding: 20px;
+  color: #222;
+}
+
+.pitch-results-graph-box {
+  padding: 20px;
+  background-color: #fff;
+  margin: 5px 20px 20px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.pitch-results-graph-title {
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.pitch-results-graph-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.pitch-results-sort-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 20px 20px;
+}
+
+.pitch-results-history-title {
+  color: #222;
+}
+
+.pitch-results-sort-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pitch-results-sort-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #222;
+}
+
+.pitch-results-sort-select {
+  padding: 8px 12px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  color: #222;
+}
+
+.pitch-results-sort-select:focus {
+  border-color: #888;
+}
+
+.pitch-results-sort-select:blur {
+  border-color: #ccc;
+}
+
+.pitch-results-list-container {
+  padding: 0 20px 50px 20px;
+}
+
+.pitch-results-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  color: #222;
+}
+
+.pitch-results-item-text {
+  color: #222;
 }

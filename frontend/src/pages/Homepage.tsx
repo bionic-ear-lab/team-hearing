@@ -20,12 +20,14 @@ const Homepage: React.FC = () => {
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Audiometry')}
+            disabled
           >
             Audiometry
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Environmental Sounds')}
+            disabled
           >
             Environmental Sounds
           </button>
@@ -40,18 +42,24 @@ const Homepage: React.FC = () => {
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Psychophysics')}
+            disabled
+            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
             Psychophysics
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Seeing and Hearing Speech')}
+            disabled
+            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
             Seeing and Hearing Speech
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Speech Recognition')}
+            disabled
+            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
             Speech Recognition
           </button>
