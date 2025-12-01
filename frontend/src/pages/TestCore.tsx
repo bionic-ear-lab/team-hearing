@@ -56,7 +56,7 @@ const TestCore: React.FC<Props> = ({
   const DEBUG = false; // toggle to true when debugging to see note information
 
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const volume = user?.volume ?? 1.0;
   const userId = user?.id;
   console.log("User id: ", userId);
@@ -134,6 +134,37 @@ const TestCore: React.FC<Props> = ({
     setIsPlaying(true);
     await player(baseNote, note1, note2, setQuestion, volume);
     setIsPlaying(false);
+  };
+
+  const handleVolumeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+
+    // Update AuthContext so the new volume is used everywhere
+    if (user) {
+      setUser({ ...user, volume: newVolume });
+    }
+
+    // Persist to backend so the user's preference is saved
+    try {
+      const authToken = localStorage.getItem("authToken");
+      if (!authToken || !user?.id) {
+        return;
+      }
+
+      await fetch("/api/users/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: authToken,
+        },
+        body: JSON.stringify({
+          id: user.id,
+          volume: newVolume,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to update volume preference", err);
+    }
   };
 
   const markCorrect = (i: number) => {
@@ -273,6 +304,22 @@ const TestCore: React.FC<Props> = ({
       <div className="pitch-info">
         Pitch resolution: {currentSemitoneGap.toFixed(2)} semitones
         {DEBUG && <> (Note1: {note1}, Note2: {note2}, index {pitchIndex}, Base note: {baseNote})</>}
+      </div>
+
+      <div className="volume-control-row">
+        <label htmlFor="volume-slider" className="volume-label">
+          Volume: {Math.round((user?.volume ?? 1.0) * 100)}%
+        </label>
+        <input
+          id="volume-slider"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={user?.volume ?? 1.0}
+          onChange={handleVolumeChange}
+          className="volume-slider"
+        />
       </div>
     </div>
   );
