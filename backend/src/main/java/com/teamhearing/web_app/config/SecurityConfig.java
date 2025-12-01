@@ -22,6 +22,14 @@ public class SecurityConfig {
       .cors(cors -> cors.configurationSource(corsConfigurationSource()))
       .csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(auth -> auth
+        ///added section below
+        .requestMatchers("/").permitAll()
+        .requestMatchers("/index.html").permitAll()
+        .requestMatchers("/assets/**").permitAll()
+        .requestMatchers("/*.js", "/*.css", "/*.svg", "/*.ico", "/*.png", "/*.jpg", "/*.woff", "/*.woff2").permitAll()
+       
+       //added section
+       
         .requestMatchers("/auth/**").permitAll()
         .requestMatchers("/api/tests/**").permitAll()  // Allow test API endpoints
         .requestMatchers("/api/users/me").permitAll() //to load details from db for user for profile
@@ -37,7 +45,7 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8080"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(Arrays.asList("*"));
     configuration.setAllowCredentials(true);

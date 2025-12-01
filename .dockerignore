@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.iml
+*.swp
+*.swo
+*~
+
+# Node
+node_modules
+npm-debug.log
+frontend/node_modules
+frontend/dist
+
+# Maven
+backend/target
+.mvn/wrapper/maven-wrapper.jar
+
+# Build artifacts
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+logs
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+documentation/
+
+# Scripts (optional - keep if needed)
+# build-and-run.sh
+
+# Test files
+**/test/**
+**/tests/**
+
+# Temporary files
+*.tmp
+*.temp
+
