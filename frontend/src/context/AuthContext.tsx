@@ -24,14 +24,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     if (token) {
       validateToken(token)
         .then((userData: AuthResponse) => {
           setUser(userData);
         })
         .catch(() => {
-          localStorage.removeItem('authToken');
+          sessionStorage.removeItem('authToken');
         })
         .finally(() => {
           setLoading(false);
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (username: string, password: string): Promise<AuthResponse> => {
   const response = await loginAPI(username, password);
-  localStorage.setItem('authToken', response.token);
+  sessionStorage.setItem('authToken', response.token);
   setUser(response);
   return response;
 };
@@ -57,7 +57,7 @@ const handleSignup = async (
   gender: string
 ): Promise<AuthResponse> => {
   const response = await signup(username, email, password, birthdate, gender);
-  localStorage.setItem('authToken', response.token);
+  sessionStorage.setItem('authToken', response.token);
   setUser(response);
   return response;
 };
