@@ -22,14 +22,21 @@ const Homepage: React.FC = () => {
             onClick={() => handleButtonClick('Audiometry')}
             disabled
           >
-            Audiometry
+            <div>
+              <div>Audiometry</div>
+              <div className="coming-soon">Coming soon...</div>
+            </div>
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Environmental Sounds')}
             disabled
           >
-            Environmental Sounds
+            <div>
+            <div>Environmental Sounds</div>
+            <div className="coming-soon">Coming soon...</div>
+            </div>
+            
           </button>
           <button
             className="exercise-button"
@@ -43,25 +50,31 @@ const Homepage: React.FC = () => {
             className="exercise-button"
             onClick={() => handleButtonClick('Psychophysics')}
             disabled
-            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
-            Psychophysics
+            <div>
+            <div>Psychophysics</div>
+            <div className="coming-soon">Coming soon...</div>
+            </div>
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Seeing and Hearing Speech')}
             disabled
-            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
-            Seeing and Hearing Speech
+            <div>
+            <div>Seeing and Hearing Speech</div>
+            <div className="coming-soon">Coming soon...</div>
+            </div>
           </button>
           <button
             className="exercise-button"
             onClick={() => handleButtonClick('Speech Recognition')}
             disabled
-            style={{ opacity: 0.5, cursor: 'not-allowed' }}
           >
-            Speech Recognition
+            <div>
+            <div>Speech Recognition</div>
+            <div className="coming-soon">Coming soon...</div>
+            </div>
           </button>
         </div>
       </div>
