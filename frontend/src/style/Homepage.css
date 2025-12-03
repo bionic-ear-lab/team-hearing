@@ -73,7 +73,6 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.10);
 }
 
-/* Disabled button state */
 .exercise-button:disabled {
   background: #e0e0e0;
   border-color: #d0d0d0;
@@ -95,6 +94,13 @@
   border-color: #d0d0d0;
   color: #999;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.coming-soon {
+  font-size: 0.7em;
+  font-weight: 400;
+  margin-top: 8px;
+  opacity: 0.8;
 }
 
 /* Responsive design for smaller screens */

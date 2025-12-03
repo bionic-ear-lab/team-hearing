@@ -37,3 +37,7 @@ Defines all configuration properties required to run a test using `TestCore`. Ea
 ## Props Interface
 
 Extends `MusicTestConfig` by adding React-specific UI behavior.
+
+## How to implement future tests
+
+`TestCore` is designed to be generic and easy to extend for future tests. However, it has not been tested beyond the PitchResolutionTest. We have added a `how-to` directory in `/documentation` with our thoughts on how to expand it for certain tests.

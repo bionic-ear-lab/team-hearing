@@ -181,6 +181,24 @@ body {
   position: static; 
 }
 
+.volume-control-row {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 8px;
+  gap: 6px;
+}
+
+.volume-label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.volume-slider {
+  width: 100%;
+}
+
 .repeat-button {
   background: #68a5d0;
   color: #fff;

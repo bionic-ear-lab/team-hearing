@@ -50,8 +50,3 @@ build/
 
 # VS Code
 .vscode/
-
-# Music files
-/frontend/public/musescore/library/piano/pitchshifted
-/frontend/public/musescore/library/piano/original
-processor.js
