@@ -1,8 +1,15 @@
 package com.teamhearing.web_app.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tests")
@@ -19,7 +26,8 @@ public class TestResult {
     
     private String subuser;
     
-    private Integer gap;
+    @Column(name = "gap", precision = 5, scale = 3)
+    private BigDecimal gap;
     
     @Column(columnDefinition = "JSON")
     private String wrongAnswers;
@@ -31,7 +39,7 @@ public class TestResult {
     
     public TestResult() {}
     
-    public TestResult(String testType, Long userId, Integer gap, String wrongAnswers, String note_range) {
+    public TestResult(String testType, Long userId, BigDecimal gap, String wrongAnswers, String note_range) {
         this.testType = testType;
         this.userId = userId;
         this.subuser = null;
@@ -41,7 +49,7 @@ public class TestResult {
         this.note_range = note_range;
     }
 
-    public TestResult(String testType, Long userId, String subuser, Integer gap, String wrongAnswers, String note_range) {
+    public TestResult(String testType, Long userId, String subuser, BigDecimal gap, String wrongAnswers, String note_range) {
         this.testType = testType;
         this.userId = userId;
         this.subuser = subuser;
@@ -106,11 +114,11 @@ public class TestResult {
         this.subuser = subuser;
     }
     
-    public Integer getGap() {
+    public BigDecimal getGap() {
         return gap;
     }
     
-    public void setGap(Integer gap) {
+    public void setGap(BigDecimal gap) {
         this.gap = gap;
     }
     

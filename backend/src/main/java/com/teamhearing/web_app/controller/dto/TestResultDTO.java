@@ -1,7 +1,9 @@
 package com.teamhearing.web_app.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TestResultDTO {
     
@@ -15,7 +17,7 @@ public class TestResultDTO {
     private String subuser;
     
     @JsonProperty("gap")
-    private Integer gap;
+    private BigDecimal gap;
     
     @JsonProperty("wrongAnswers")
     private List<Integer> wrongAnswers;
@@ -25,7 +27,7 @@ public class TestResultDTO {
     
     public TestResultDTO() {}
     
-    public TestResultDTO(Long userId, String testType, String subuser, Integer gap, List<Integer> wrongAnswers, String note_range) {
+    public TestResultDTO(Long userId, String testType, String subuser, BigDecimal gap, List<Integer> wrongAnswers, String note_range) {
         this.userId = userId;
         this.testType = testType;
         this.subuser = subuser;
@@ -66,11 +68,11 @@ public class TestResultDTO {
         this.subuser = subuser;
     }
     
-    public Integer getGap() {
+    public BigDecimal getGap() {
         return gap;
     }
     
-    public void setGap(Integer gap) {
+    public void setGap(BigDecimal gap) {
         this.gap = gap;
     }
     
