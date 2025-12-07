@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS tests (
   test_type VARCHAR(100) NOT NULL,
   user_id BIGINT NOT NULL,
   subuser VARCHAR(100),
-  gap INT,
+  gap DECIMAL(5, 3),
   wrong_answers JSON,
   note_range VARCHAR(100),
   time_logged TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
