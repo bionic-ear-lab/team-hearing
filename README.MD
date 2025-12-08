@@ -4,6 +4,8 @@ This is a full-stack web application built with a **Spring Boot** backend and a 
 
 The project is configured to run both the backend and frontend servers concurrently for a smooth development experience.
 
+Demo found at [finaldemo.mov](documentation/finaldemo.mov)
+
 -----
 
 ## Prerequisites
